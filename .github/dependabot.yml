@@ -7,6 +7,10 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # Runtime dependency bumps ship as a patch release; dev and CI bumps don't release.
+    commit-message:
+      prefix: "deps"
+      prefix-development: "chore"
     groups:
       takumi:
         patterns: ["@takumi-rs/*", "takumi-*"]
@@ -18,3 +22,5 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    commit-message:
+      prefix: "ci"

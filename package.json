@@ -1,7 +1,31 @@
 {
-  "name": "@scout/render",
-  "version": "0.1.0",
+  "name": "@reallygoodwork/scout-render",
+  "version": "0.0.0-development",
   "description": "Brand-aware rendering for agents: PNG, JPEG, WebP, GIF, MP4, WebM, SVG and PDF from one JSON scene. Renders on the user's device when it can, on the server when it should.",
+  "keywords": [
+    "render",
+    "brand",
+    "design-tokens",
+    "takumi",
+    "video",
+    "mp4",
+    "gif",
+    "pdf",
+    "og-image",
+    "agents",
+    "mcp",
+    "webcodecs",
+    "wasm"
+  ],
+  "homepage": "https://github.com/reallygoodwork/scout-render#readme",
+  "bugs": {
+    "url": "https://github.com/reallygoodwork/scout-render/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reallygoodwork/scout-render.git"
+  },
+  "author": "Really Good Work Inc.",
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
@@ -33,7 +57,8 @@
   "files": [
     "dist",
     "README.md",
-    "AGENTS.md"
+    "AGENTS.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsup",
@@ -45,7 +70,10 @@
     "test:conformance": "tsx test/conformance/run.ts",
     "test:all": "npm run typecheck && npm test && npm run test:browser && npm run test:conformance",
     "perf": "python3 scripts/perf.py 3",
-    "demons": "tsx scripts/demons.ts"
+    "demons": "tsx scripts/demons.ts",
+    "prepack": "npm run build",
+    "check:package": "publint --strict && npm pack --dry-run",
+    "release": "semantic-release"
   },
   "dependencies": {
     "@takumi-rs/core": "2.22.1",
@@ -63,15 +91,22 @@
     "@napi-rs/canvas": "^1.1.1",
     "@types/node": "^22.0.0",
     "@types/pngjs": "^6.0.5",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "esbuild": "^0.28.2",
     "pixelmatch": "^8.0.0",
     "playwright": "^1.65.1",
     "pngjs": "^7.0.0",
+    "publint": "^0.3.25",
+    "semantic-release": "^25.0.9",
     "tsup": "^8.5.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
   },
   "engines": {
     "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }

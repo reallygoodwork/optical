@@ -3,7 +3,7 @@
 // Not exercised in this repo's tests; the plan/render({frames})/join path it relies on is.
 import { send, handleCallback } from "@vercel/queue";
 import { put } from "@vercel/blob";
-import { createNodeStudio, loadBrand } from "@scout/render/node";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
 
 const studio = createNodeStudio({ brand: await loadBrand(process.cwd() + "/brand/brand.json") });
 

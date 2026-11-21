@@ -1,9 +1,9 @@
 /**
- * @scout/render — platform-neutral core.
+ * @reallygoodwork/scout-render — platform-neutral core.
  *
  * Import a runtime entry to get a working studio:
- *   import { createNodeStudio } from "@scout/render/node";      // servers, agents, CLIs
- *   import { createBrowserStudio } from "@scout/render/browser"; // user's device, with server fallback
+ *   import { createNodeStudio } from "@reallygoodwork/scout-render/node";      // servers, agents, CLIs
+ *   import { createBrowserStudio } from "@reallygoodwork/scout-render/browser"; // user's device, with server fallback
  */
 export * from "./core/schema.js";
 export { SIZES, resolveSize, type SizeInput, type SizeName } from "./core/sizes.js";

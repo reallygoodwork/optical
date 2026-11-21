@@ -1,6 +1,6 @@
 // Next.js route handler on Vercel: one endpoint for render / preview / variants / edit / validate.
-import { createNodeStudio, loadBrand } from "@scout/render/node";
-import { createRenderHandler } from "@scout/render/server";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
+import { createRenderHandler } from "@reallygoodwork/scout-render/server";
 import { put, head } from "@vercel/blob";
 
 export const runtime = "nodejs";

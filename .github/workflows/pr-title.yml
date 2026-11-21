@@ -1,0 +1,31 @@
+# Squash merges use the PR title as the commit message, and semantic-release reads those
+# messages to pick the version. This keeps every title in Conventional Commits form.
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  conventional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const types = ["feat", "fix", "perf", "refactor", "deps", "docs", "test", "ci", "chore", "build", "style", "revert"];
+            const re = new RegExp(`^(${types.join("|")})(\\([\\w./-]+\\))?(!)?: \\S.*$`);
+            if (!re.test(title)) {
+              core.setFailed([
+                `"${title}" isn't a Conventional Commit title.`,
+                `Use "<type>(optional scope): summary", where type is one of: ${types.join(", ")}.`,
+                `feat → minor release, fix/perf/refactor/deps → patch, "!" after the type or a "BREAKING CHANGE:" footer → major.`,
+              ].join("\n"));
+            } else {
+              core.notice(`OK: ${title}`);
+            }

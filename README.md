@@ -1,4 +1,4 @@
-# @scout/render
+# @reallygoodwork/scout-render
 
 Turn one JSON **scene** into on-brand **PNG, JPEG, WebP, GIF, APNG, animated WebP, MP4, WebM, SVG or PDF**. Your brand's tokens, fonts and motion are applied automatically. It renders on the user's device when it can and on your server when it should, and agents can drive it through plain JSON or MCP.
 
@@ -14,22 +14,23 @@ Turn one JSON **scene** into on-brand **PNG, JPEG, WebP, GIF, APNG, animated Web
 
 *The same scene produces the same pixels on a device (Takumi in WebAssembly) and on a server (native Takumi). The browser tests check this on every PR.*
 
-**Contents:** [Quick start](#quick-start) · [Examples](#examples) · [Concepts](#concepts) · [Rendering](#rendering) · [Where it runs](#where-it-runs) · [For agents](#for-agents) · [Going further](#going-further) · [Performance](#performance) · [What's supported](#whats-supported) · [Testing and CI](#testing-and-ci) · [Limits](#limits) · [Project layout](#project-layout)
+**Contents:** [Quick start](#quick-start) · [Examples](#examples) · [Concepts](#concepts) · [Rendering](#rendering) · [Where it runs](#where-it-runs) · [For agents](#for-agents) · [Going further](#going-further) · [Performance](#performance) · [What's supported](#whats-supported) · [Testing and CI](#testing-and-ci) · [Releasing](#releasing) · [Limits](#limits) · [Project layout](#project-layout)
 
 ## Quick start
 
-Requirements: Node 20+, and for video on a server, `ffmpeg` on your `PATH` (or set `SCOUT_FFMPEG`). The package isn't published to npm yet, so install it from this repo:
+Requirements: Node 20+, and for video on a server, `ffmpeg` on your `PATH` (or set `SCOUT_FFMPEG`).
 
 ```bash
-npm install
-npm run build
+npm install @reallygoodwork/scout-render
 ```
+
+The examples below use the brand in [`examples/brand`](examples/brand). To run them, clone this repo, then `npm install && npm run build`.
 
 Render a template with the example brand:
 
 ```ts
 import { writeFile } from "node:fs/promises";
-import { createNodeStudio, loadBrand } from "@scout/render/node";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
 
 const studio = createNodeStudio({ brand: await loadBrand("examples/brand/brand.json") });
 
@@ -146,7 +147,7 @@ studio.render({ template: "announcement", props: { headline: "Launch day", media
 Change a scene with small operations that target layers by `id`. They return a new scene and never modify the old one, so an edit history is just an array.
 
 ```ts
-import { edit } from "@scout/render";
+import { edit } from "@reallygoodwork/scout-render";
 
 const next = edit(scene, [
   { op: "set", target: "headline", path: "text", value: "Fall drop: 20% off" },
@@ -192,24 +193,24 @@ Other calls on the studio:
 
 ## Where it runs
 
-### On a server or in an agent: `@scout/render/node`
+### On a server or in an agent: `@reallygoodwork/scout-render/node`
 
 Uses native Takumi plus ffmpeg. This is the right choice for agents, scheduled jobs, APIs and anything without a browser.
 
 ```ts
-import { createNodeStudio, loadBrand } from "@scout/render/node";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
 const studio = createNodeStudio({
   brand: await loadBrand("brand.json"),
   store: myCache,               // optional { get, set }: Blob, R2, KV, disk. Identical requests never render twice.
 });
 ```
 
-### On the user's device: `@scout/render/browser`
+### On the user's device: `@reallygoodwork/scout-render/browser`
 
 Uses Takumi compiled to WebAssembly, and WebCodecs (through [Mediabunny](https://mediabunny.dev)) to decode source media and encode MP4/WebM. Rendering on the device costs you nothing. When a job is too big for the device, it goes to your server.
 
 ```ts
-import { createBrowserStudio } from "@scout/render/browser";
+import { createBrowserStudio } from "@reallygoodwork/scout-render/browser";
 
 const studio = createBrowserStudio({
   brand,
@@ -238,14 +239,14 @@ Routing rules, in order:
 
 The whole studio also runs inside a Web Worker, which keeps the page responsive. Your bundler resolves the wasm through `@takumi-rs/wasm/auto`; if it can't, pass URLs: `backend: { wasm: "/takumi_wasm_bg.wasm", pdfWasm: "/takumi_pdf_wasm_bg.wasm" }` (both files ship in `node_modules`).
 
-### As an HTTP endpoint: `@scout/render/server`
+### As an HTTP endpoint: `@reallygoodwork/scout-render/server`
 
 One Request/Response handler covers everything a client or agent needs. It works in a Next.js route, a Vercel Function, Hono or Bun.
 
 ```ts
 // app/api/render/route.ts
-import { createNodeStudio, loadBrand } from "@scout/render/node";
-import { createRenderHandler } from "@scout/render/server";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
+import { createRenderHandler } from "@reallygoodwork/scout-render/server";
 import { put } from "@vercel/blob";
 
 const studio = createNodeStudio({ brand: await loadBrand(process.cwd() + "/brand/brand.json") });
@@ -294,7 +295,7 @@ Scenes are stored on the server and addressed by `sceneId`, so an agent iterates
 Without MCP, the same tools work with any SDK:
 
 ```ts
-import { createAgentTools } from "@scout/render/agent";
+import { createAgentTools } from "@reallygoodwork/scout-render/agent";
 const tools = createAgentTools(studio, { outDir: "./out" });
 tools.anthropic();   // tool definitions for the Anthropic Messages API
 tools.openai();      // function-calling definitions
@@ -416,6 +417,24 @@ npm run perf              # the performance table above
 - **Results:** each PR gets one comment with the CSS matrix and browser checks, updated on every push.
 - **After a Takumi upgrade:** run **Update conformance baseline** from the Actions tab to accept new results.
 - **Updates:** Dependabot groups Takumi releases into one PR so the comment shows exactly what changed.
+
+## Releasing
+
+Releases are automatic. Every push to `main` runs CI, then [semantic-release](https://semantic-release.gitbook.io) reads the commit messages since the last tag, picks the next [semantic version](https://semver.org), publishes to npm with [provenance](https://docs.npmjs.com/generating-provenance-statements), tags the commit and writes a GitHub release with notes.
+
+The commit type decides the version:
+
+| Commit | Release | Example |
+|---|---|---|
+| `feat:` | minor | `feat(browser): render WebM on device` |
+| `fix:` `perf:` `refactor:` `deps:` | patch | `fix(node): centre the crop when zooming` |
+| `feat!:` or a `BREAKING CHANGE:` footer | major | `feat!: rename Scene.layers to Scene.items` |
+| `docs:` `test:` `ci:` `chore:` | none | `docs: add the Demons reels` |
+
+- **Pull requests:** squash-merge them. The PR title becomes the commit message, and the **PR title** check keeps it in this form.
+- **Prereleases:** push to `next` or `beta` to publish `1.2.0-next.1` style versions under those dist-tags.
+- **Dependabot:** runtime dependency bumps are `deps:` (patch release); dev and Actions bumps are `chore:` and `ci:` (no release).
+- **Auth:** the workflow publishes through npm [trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC), so there's no long-lived npm token to rotate. A trusted publisher can only be attached once the package exists, so the very first publish uses an `NPM_TOKEN` repository secret; delete it after that.
 
 ## Limits
 

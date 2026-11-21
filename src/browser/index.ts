@@ -307,7 +307,7 @@ function canvasToRgba(canvas: HTMLCanvasElement | OffscreenCanvas): RgbaImage {
  * -------------------------------------------------------------------------------------------*/
 
 export interface RemoteOptions {
-  /** Endpoint created with `createRenderHandler` from "@scout/render/server". */
+  /** Endpoint created with `createRenderHandler` from "@reallygoodwork/scout-render/server". */
   url: string;
   headers?: Record<string, string>;
   fetch?: typeof fetch;
