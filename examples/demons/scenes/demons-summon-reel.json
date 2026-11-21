@@ -1,0 +1,1426 @@
+{
+  "size": "reel",
+  "duration": 12,
+  "fps": 30,
+  "background": "$colors.plum",
+  "layers": [
+    {
+      "id": "g-plum",
+      "type": "shape",
+      "fill": "$colors.plum",
+      "start": 0,
+      "end": 2.1
+    },
+    {
+      "id": "warp",
+      "type": "image",
+      "src": "$assets.warpFlamePlum",
+      "fit": "cover",
+      "start": 0,
+      "end": 2.1,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 1.4,
+          "rotate": -5
+        },
+        {
+          "at": 2.1,
+          "scale": 1.5499999999999998,
+          "rotate": 5,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "w0",
+      "type": "text",
+      "text": "Your",
+      "textStyle": "display",
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 560,
+      "width": 936,
+      "height": 220,
+      "size": 210,
+      "fit": "line",
+      "align": "left",
+      "start": 0,
+      "end": 2.1,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.28,
+        "ease": "outBack"
+      },
+      "exit": {
+        "preset": "slide-left",
+        "duration": 0.25,
+        "ease": "inCubic"
+      }
+    },
+    {
+      "id": "w1",
+      "type": "text",
+      "text": "brand's",
+      "textStyle": "display",
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 770,
+      "width": 936,
+      "height": 220,
+      "size": 210,
+      "fit": "line",
+      "align": "left",
+      "start": 0.5,
+      "end": 2.1,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.28,
+        "ease": "outBack"
+      },
+      "exit": {
+        "preset": "slide-left",
+        "duration": 0.25,
+        "ease": "inCubic"
+      }
+    },
+    {
+      "id": "w2",
+      "type": "text",
+      "text": "background",
+      "textStyle": "display",
+      "color": "$colors.gold",
+      "x": 72,
+      "y": 980,
+      "width": 936,
+      "height": 220,
+      "size": 210,
+      "fit": "line",
+      "align": "left",
+      "start": 1,
+      "end": 2.1,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.28,
+        "ease": "outBack"
+      },
+      "exit": {
+        "preset": "slide-left",
+        "duration": 0.25,
+        "ease": "inCubic"
+      }
+    },
+    {
+      "id": "w3",
+      "type": "text",
+      "text": "crew.",
+      "textStyle": "display",
+      "color": "$colors.acid",
+      "x": 72,
+      "y": 1190,
+      "width": 936,
+      "height": 220,
+      "size": 210,
+      "fit": "line",
+      "align": "left",
+      "start": 1.5,
+      "end": 2.1,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.28,
+        "ease": "outBack"
+      },
+      "exit": {
+        "preset": "slide-left",
+        "duration": 0.25,
+        "ease": "inCubic"
+      }
+    },
+    {
+      "id": "cut1",
+      "type": "shape",
+      "fill": "$colors.flame",
+      "start": 1.8800000000000001,
+      "end": 2.2800000000000002,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -1160
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 1160,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "g-scout",
+      "type": "shape",
+      "fill": "$colors.sapphire",
+      "start": 2.1,
+      "end": 3.6
+    },
+    {
+      "id": "p-scout",
+      "type": "image",
+      "src": "$assets.warpSapphireMaya",
+      "fit": "cover",
+      "start": 2.1,
+      "end": 3.6,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 1.3,
+          "rotate": -4
+        },
+        {
+          "at": 1.5,
+          "scale": 1.45,
+          "rotate": 4,
+          "ease": "linear"
+        }
+      ],
+      "opacity": 0.35
+    },
+    {
+      "id": "ring-scout",
+      "type": "shape",
+      "shape": "circle",
+      "fill": "transparent",
+      "stroke": "$colors.bone",
+      "strokeWidth": 6,
+      "x": 190,
+      "y": 330,
+      "width": 700,
+      "height": 700,
+      "opacity": 0.25,
+      "start": 2.1,
+      "end": 3.6,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 0.6,
+          "opacity": 0
+        },
+        {
+          "at": 0.5,
+          "scale": 1,
+          "opacity": 0.25,
+          "ease": "outCubic"
+        },
+        {
+          "at": 1.5,
+          "scale": 1.25,
+          "opacity": 0,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "d-scout",
+      "type": "image",
+      "src": "$assets.scout",
+      "fit": "contain",
+      "x": 240,
+      "y": 380,
+      "width": 600,
+      "height": 600,
+      "start": 2.1,
+      "end": 3.6,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "n-scout",
+      "type": "text",
+      "text": "Scout",
+      "textStyle": "display",
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 1080,
+      "width": 936,
+      "height": 210,
+      "size": 200,
+      "fit": "line",
+      "align": "center",
+      "start": 2.22,
+      "end": 3.6,
+      "enter": {
+        "preset": "rise",
+        "duration": 0.3,
+        "ease": "outBack"
+      }
+    },
+    {
+      "id": "v-scout",
+      "type": "text",
+      "text": "maps it.",
+      "textStyle": "serif",
+      "size": 120,
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 1290,
+      "width": 936,
+      "align": "center",
+      "style": {
+        "fontStyle": "italic"
+      },
+      "start": 2.6,
+      "end": 3.6,
+      "enter": {
+        "preset": "slide-right",
+        "duration": 0.3,
+        "ease": "outCubic"
+      }
+    },
+    {
+      "id": "l-scout",
+      "type": "text",
+      "text": "scout: read 1,204 assets. map ready.",
+      "textStyle": "daemon",
+      "size": 34,
+      "color": "$colors.acid",
+      "x": 120,
+      "y": 1520,
+      "width": 789,
+      "start": 2.7,
+      "end": 3.6,
+      "enter": {
+        "preset": "typewriter",
+        "duration": 0.7,
+        "ease": "linear"
+      },
+      "background": "$colors.ink",
+      "padding": [
+        17,
+        27
+      ],
+      "radius": 999
+    },
+    {
+      "id": "cut-scout",
+      "type": "shape",
+      "fill": "$colors.flame",
+      "start": 3.38,
+      "end": 3.7800000000000002,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -1160
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 1160,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "g-keeper",
+      "type": "shape",
+      "fill": "$colors.ink",
+      "start": 3.6,
+      "end": 5.1
+    },
+    {
+      "id": "ring-keeper",
+      "type": "shape",
+      "shape": "circle",
+      "fill": "transparent",
+      "stroke": "$colors.bone",
+      "strokeWidth": 6,
+      "x": 190,
+      "y": 330,
+      "width": 700,
+      "height": 700,
+      "opacity": 0.25,
+      "start": 3.6,
+      "end": 5.1,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 0.6,
+          "opacity": 0
+        },
+        {
+          "at": 0.5,
+          "scale": 1,
+          "opacity": 0.25,
+          "ease": "outCubic"
+        },
+        {
+          "at": 1.5,
+          "scale": 1.25,
+          "opacity": 0,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "d-keeper",
+      "type": "image",
+      "src": "$assets.keeper",
+      "fit": "contain",
+      "x": 240,
+      "y": 380,
+      "width": 600,
+      "height": 600,
+      "start": 3.6,
+      "end": 5.1,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "n-keeper",
+      "type": "text",
+      "text": "Keeper",
+      "textStyle": "display",
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 1080,
+      "width": 936,
+      "height": 210,
+      "size": 200,
+      "fit": "line",
+      "align": "center",
+      "start": 3.72,
+      "end": 5.1,
+      "enter": {
+        "preset": "rise",
+        "duration": 0.3,
+        "ease": "outBack"
+      }
+    },
+    {
+      "id": "v-keeper",
+      "type": "text",
+      "text": "checks it.",
+      "textStyle": "serif",
+      "size": 120,
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 1290,
+      "width": 936,
+      "align": "center",
+      "style": {
+        "fontStyle": "italic"
+      },
+      "start": 4.1,
+      "end": 5.1,
+      "enter": {
+        "preset": "slide-right",
+        "duration": 0.3,
+        "ease": "outCubic"
+      }
+    },
+    {
+      "id": "l-keeper",
+      "type": "text",
+      "text": "keeper: 1 fix. cta colour → flame.",
+      "textStyle": "daemon",
+      "size": 34,
+      "color": "$colors.acid",
+      "x": 120,
+      "y": 1520,
+      "width": 748,
+      "start": 4.2,
+      "end": 5.1,
+      "enter": {
+        "preset": "typewriter",
+        "duration": 0.7,
+        "ease": "linear"
+      },
+      "background": "$colors.raised",
+      "padding": [
+        17,
+        27
+      ],
+      "radius": 999
+    },
+    {
+      "id": "cut-keeper",
+      "type": "shape",
+      "fill": "$colors.acid",
+      "start": 4.88,
+      "end": 5.279999999999999,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -1160
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 1160,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "g-builder",
+      "type": "shape",
+      "fill": "$colors.gold",
+      "start": 5.1,
+      "end": 6.6
+    },
+    {
+      "id": "ring-builder",
+      "type": "shape",
+      "shape": "circle",
+      "fill": "transparent",
+      "stroke": "$colors.ink",
+      "strokeWidth": 6,
+      "x": 190,
+      "y": 330,
+      "width": 700,
+      "height": 700,
+      "opacity": 0.25,
+      "start": 5.1,
+      "end": 6.6,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 0.6,
+          "opacity": 0
+        },
+        {
+          "at": 0.5,
+          "scale": 1,
+          "opacity": 0.25,
+          "ease": "outCubic"
+        },
+        {
+          "at": 1.5,
+          "scale": 1.25,
+          "opacity": 0,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "d-builder",
+      "type": "image",
+      "src": "$assets.builder",
+      "fit": "contain",
+      "x": 240,
+      "y": 380,
+      "width": 600,
+      "height": 600,
+      "start": 5.1,
+      "end": 6.6,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "n-builder",
+      "type": "text",
+      "text": "Builder",
+      "textStyle": "display",
+      "color": "$colors.ink",
+      "x": 72,
+      "y": 1080,
+      "width": 936,
+      "height": 210,
+      "size": 200,
+      "fit": "line",
+      "align": "center",
+      "start": 5.22,
+      "end": 6.6,
+      "enter": {
+        "preset": "rise",
+        "duration": 0.3,
+        "ease": "outBack"
+      }
+    },
+    {
+      "id": "v-builder",
+      "type": "text",
+      "text": "ships it.",
+      "textStyle": "serif",
+      "size": 120,
+      "color": "$colors.ink",
+      "x": 72,
+      "y": 1290,
+      "width": 936,
+      "align": "center",
+      "style": {
+        "fontStyle": "italic"
+      },
+      "start": 5.6,
+      "end": 6.6,
+      "enter": {
+        "preset": "slide-right",
+        "duration": 0.3,
+        "ease": "outCubic"
+      }
+    },
+    {
+      "id": "l-builder",
+      "type": "text",
+      "text": "builder: 6 sizes from 1 template.",
+      "textStyle": "daemon",
+      "size": 34,
+      "color": "$colors.bone",
+      "x": 120,
+      "y": 1520,
+      "width": 728,
+      "start": 5.699999999999999,
+      "end": 6.6,
+      "enter": {
+        "preset": "typewriter",
+        "duration": 0.7,
+        "ease": "linear"
+      },
+      "background": "$colors.ink",
+      "padding": [
+        17,
+        27
+      ],
+      "radius": 999
+    },
+    {
+      "id": "cut-builder",
+      "type": "shape",
+      "fill": "$colors.flame",
+      "start": 6.38,
+      "end": 6.779999999999999,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -1160
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 1160,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "g-tally",
+      "type": "shape",
+      "fill": "$colors.plum",
+      "start": 6.6,
+      "end": 8.1
+    },
+    {
+      "id": "ring-tally",
+      "type": "shape",
+      "shape": "circle",
+      "fill": "transparent",
+      "stroke": "$colors.bone",
+      "strokeWidth": 6,
+      "x": 190,
+      "y": 330,
+      "width": 700,
+      "height": 700,
+      "opacity": 0.25,
+      "start": 6.6,
+      "end": 8.1,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 0.6,
+          "opacity": 0
+        },
+        {
+          "at": 0.5,
+          "scale": 1,
+          "opacity": 0.25,
+          "ease": "outCubic"
+        },
+        {
+          "at": 1.5,
+          "scale": 1.25,
+          "opacity": 0,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "d-tally",
+      "type": "image",
+      "src": "$assets.tally",
+      "fit": "contain",
+      "x": 240,
+      "y": 380,
+      "width": 600,
+      "height": 600,
+      "start": 6.6,
+      "end": 8.1,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -36,
+          "rotate": 6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.5,
+          "y": 0,
+          "rotate": -6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "n-tally",
+      "type": "text",
+      "text": "Tally",
+      "textStyle": "display",
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 1080,
+      "width": 936,
+      "height": 210,
+      "size": 200,
+      "fit": "line",
+      "align": "center",
+      "start": 6.72,
+      "end": 8.1,
+      "enter": {
+        "preset": "rise",
+        "duration": 0.3,
+        "ease": "outBack"
+      }
+    },
+    {
+      "id": "v-tally",
+      "type": "text",
+      "text": "counts it.",
+      "textStyle": "serif",
+      "size": 120,
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 1290,
+      "width": 936,
+      "align": "center",
+      "style": {
+        "fontStyle": "italic"
+      },
+      "start": 7.1,
+      "end": 8.1,
+      "enter": {
+        "preset": "slide-right",
+        "duration": 0.3,
+        "ease": "outCubic"
+      }
+    },
+    {
+      "id": "l-tally",
+      "type": "text",
+      "text": "tally: 96% on brand first try.",
+      "textStyle": "daemon",
+      "size": 34,
+      "color": "$colors.acid",
+      "x": 120,
+      "y": 1520,
+      "width": 667,
+      "start": 7.199999999999999,
+      "end": 8.1,
+      "enter": {
+        "preset": "typewriter",
+        "duration": 0.7,
+        "ease": "linear"
+      },
+      "background": "$colors.raised",
+      "padding": [
+        17,
+        27
+      ],
+      "radius": 999
+    },
+    {
+      "id": "cut3",
+      "type": "shape",
+      "fill": "$colors.candy",
+      "start": 7.88,
+      "end": 8.28,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -1160
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 1160,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "g-bone",
+      "type": "shape",
+      "fill": "$colors.bone",
+      "start": 8.1,
+      "end": 10.1
+    },
+    {
+      "id": "sun",
+      "type": "image",
+      "src": "$assets.sunray",
+      "fit": "cover",
+      "opacity": 0.18,
+      "start": 8.1,
+      "end": 10.1,
+      "x": -420,
+      "y": -100,
+      "width": 1920,
+      "height": 1920,
+      "keyframes": [
+        {
+          "at": 0,
+          "rotate": 0
+        },
+        {
+          "at": 2,
+          "rotate": 25,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "ask1",
+      "type": "text",
+      "text": "Summon",
+      "textStyle": "display",
+      "color": "$colors.ink",
+      "x": 72,
+      "y": 260,
+      "width": 936,
+      "height": 230,
+      "size": 230,
+      "fit": "line",
+      "align": "center",
+      "start": 8.1,
+      "end": 10.1,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.28,
+        "ease": "outBack"
+      }
+    },
+    {
+      "id": "ask2",
+      "type": "text",
+      "text": "the crew.",
+      "textStyle": "display",
+      "color": "$colors.ink",
+      "x": 72,
+      "y": 480,
+      "width": 936,
+      "height": 230,
+      "size": 230,
+      "fit": "line",
+      "align": "center",
+      "start": 8.6,
+      "end": 10.1,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.28,
+        "ease": "outBack"
+      }
+    },
+    {
+      "id": "trio-scout",
+      "type": "image",
+      "src": "$assets.scout",
+      "fit": "contain",
+      "x": 40,
+      "y": 900,
+      "width": 380,
+      "height": 380,
+      "start": 8.299999999999999,
+      "end": 10.1,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": 6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -22.8,
+          "rotate": -6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": 6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -22.8,
+          "rotate": -6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": 6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -22.8,
+          "rotate": -6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.5,
+          "y": 0,
+          "rotate": 6,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.75,
+          "y": -22.8,
+          "rotate": -6,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "trio-keeper",
+      "type": "image",
+      "src": "$assets.keeper",
+      "fit": "contain",
+      "x": 350,
+      "y": 820,
+      "width": 400,
+      "height": 400,
+      "start": 8.5,
+      "end": 10.1,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -24,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -24,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -24,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.5,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "trio-builder",
+      "type": "image",
+      "src": "$assets.builder",
+      "fit": "contain",
+      "x": 680,
+      "y": 900,
+      "width": 380,
+      "height": 380,
+      "start": 8.7,
+      "end": 10.1,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": 4,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -22.8,
+          "rotate": -4,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": 4,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -22.8,
+          "rotate": -4,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": 4,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -22.8,
+          "rotate": -4,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "poof",
+      "type": "text",
+      "text": "Poof!",
+      "textStyle": "sticker",
+      "size": 120,
+      "color": "$colors.ink",
+      "background": "$colors.flame",
+      "x": 640,
+      "y": 1380,
+      "padding": [
+        34,
+        60
+      ],
+      "radius": 36,
+      "start": 9.1,
+      "end": 10.1,
+      "shadow": "0 10px 0 $colors.ink",
+      "rotate": -8,
+      "enter": {
+        "preset": "pop",
+        "duration": 0.35,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "rotate": -12
+        },
+        {
+          "at": 0.35,
+          "rotate": 8,
+          "ease": "outBack"
+        },
+        {
+          "at": 0.7,
+          "rotate": -3,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.05,
+          "rotate": 4,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "rotate": 0,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "cmd",
+      "type": "text",
+      "text": "/summon keeper",
+      "textStyle": "daemon",
+      "size": 40,
+      "color": "$colors.acid",
+      "x": 300,
+      "y": 1620,
+      "width": 400,
+      "start": 9,
+      "end": 10.1,
+      "enter": {
+        "preset": "typewriter",
+        "duration": 0.7,
+        "ease": "linear"
+      },
+      "background": "$colors.ink",
+      "padding": [
+        20,
+        32
+      ],
+      "radius": 999
+    },
+    {
+      "id": "cut4",
+      "type": "shape",
+      "fill": "$colors.flame",
+      "start": 9.879999999999999,
+      "end": 10.28,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -1160
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 1160,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "g-end",
+      "type": "shape",
+      "fill": "$colors.ink",
+      "start": 10.1,
+      "end": 12
+    },
+    {
+      "id": "logo",
+      "type": "image",
+      "src": "$assets.stackedBone",
+      "fit": "contain",
+      "x": 240,
+      "y": 560,
+      "width": 600,
+      "height": 480,
+      "start": 10.15,
+      "end": 12,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.45,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 1
+        },
+        {
+          "at": 1.9,
+          "scale": 1.06,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "Your brand's background crew.",
+      "textStyle": "serif",
+      "size": 72,
+      "color": "$colors.bone",
+      "x": 72,
+      "y": 1120,
+      "width": 936,
+      "align": "center",
+      "style": {
+        "fontStyle": "italic"
+      },
+      "start": 10.6,
+      "end": 12,
+      "enter": {
+        "preset": "rise",
+        "duration": 0.4
+      }
+    }
+  ],
+  "audio": [
+    {
+      "src": "examples/demons/audio/beat-120.mp3",
+      "volume": 0.8,
+      "fadeOut": 0.8
+    }
+  ]
+}

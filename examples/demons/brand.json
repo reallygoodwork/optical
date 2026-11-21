@@ -1,0 +1,39 @@
+{
+  "name": "Demons",
+  "colors": {
+    "ink": "#0E0D10", "bone": "#FBF7EE", "flame": "#FE6237", "gold": "#FFB62E", "maya": "#7CC3FF",
+    "sapphire": "#4164FF", "acid": "#B6F03C", "candy": "#F7A8D8", "plum": "#2B0A33",
+    "raised": "#1B1920", "mutedDark": "#B7B2BC"
+  },
+  "fonts": { "display": "Bricolage Grotesque", "body": "Bricolage Grotesque", "serif": "Fraunces", "mono": "JetBrains Mono" },
+  "fontFaces": [
+    { "family": "Bricolage Grotesque", "src": "./fonts/BricolageGrotesque-Full.woff2" },
+    { "family": "Fraunces", "src": "./fonts/Fraunces-400-italic.woff2", "style": "italic" },
+    { "family": "JetBrains Mono", "src": "./fonts/JetBrainsMono-500.woff2", "weight": 500 }
+  ],
+  "text": {
+    "display": { "font": "Bricolage Grotesque", "weight": 800, "lineHeight": 0.95, "letterSpacing": -0.035 },
+    "headline": { "font": "Bricolage Grotesque", "weight": 800, "lineHeight": 1.05, "letterSpacing": -0.03 },
+    "body": { "font": "Bricolage Grotesque", "weight": 400, "lineHeight": 1.35 },
+    "serif": { "font": "Fraunces", "lineHeight": 1.1 },
+    "daemon": { "font": "JetBrains Mono", "weight": 500, "lineHeight": 1.4 },
+    "sticker": { "font": "Bricolage Grotesque", "weight": 800, "uppercase": true, "letterSpacing": 0.02, "lineHeight": 1 }
+  },
+  "assets": {
+    "lockupInk": "./logo/demons-lockup-ink.svg", "lockupBone": "./logo/demons-lockup-bone.svg",
+    "stackedInk": "./logo/demons-stacked-ink.svg", "stackedBone": "./logo/demons-stacked-bone.svg",
+    "markInk": "./logo/demons-mark-ink.svg", "markBone": "./logo/demons-mark-bone.svg",
+    "logo": "./logo/demons-lockup-ink.svg", "logoOnDark": "./logo/demons-lockup-bone.svg",
+    "scout": "./crew/scout.svg", "keeper": "./crew/keeper.svg", "builder": "./crew/builder.svg",
+    "archivist": "./crew/archivist.svg", "tally": "./crew/tally.svg", "dee": "./crew/dee.svg",
+    "burstFlame": "./patterns/burst-flame.svg", "burstAcid": "./patterns/burst-acid.svg",
+    "halftoneFlame": "./patterns/halftone-flame.svg", "halftoneGold": "./patterns/halftone-gold.svg",
+    "halftoneMaya": "./patterns/halftone-maya.svg", "halftoneAcid": "./patterns/halftone-acid.svg",
+    "warpFlamePlum": "./patterns/warp-flame-plum.svg", "warpAcidPlum": "./patterns/warp-acid-plum.svg",
+    "warpSapphireMaya": "./patterns/warp-sapphire-maya.svg", "sunray": "./patterns/sunray.svg",
+    "ring": "./patterns/ring-bone-v2.svg", "dots": "./patterns/dots-border-ink.svg"
+  },
+  "layout": { "margin": 64 },
+  "motion": { "duration": 0.45, "ease": "outCubic" },
+  "defaults": { "background": "$colors.bone", "color": "$colors.ink", "font": "Bricolage Grotesque" }
+}

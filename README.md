@@ -14,7 +14,7 @@ Turn one JSON **scene** into on-brand **PNG, JPEG, WebP, GIF, APNG, animated Web
 
 *The same scene produces the same pixels on a device (Takumi in WebAssembly) and on a server (native Takumi). The browser tests check this on every PR.*
 
-**Contents:** [Quick start](#quick-start) · [Concepts](#concepts) · [Rendering](#rendering) · [Where it runs](#where-it-runs) · [For agents](#for-agents) · [Going further](#going-further) · [Performance](#performance) · [What's supported](#whats-supported) · [Testing and CI](#testing-and-ci) · [Limits](#limits) · [Project layout](#project-layout)
+**Contents:** [Quick start](#quick-start) · [Examples](#examples) · [Concepts](#concepts) · [Rendering](#rendering) · [Where it runs](#where-it-runs) · [For agents](#for-agents) · [Going further](#going-further) · [Performance](#performance) · [What's supported](#whats-supported) · [Testing and CI](#testing-and-ci) · [Limits](#limits) · [Project layout](#project-layout)
 
 ## Quick start
 
@@ -47,6 +47,31 @@ node dist/agent/cli.js render quote-card --brand examples/brand/brand.json --pro
 node dist/agent/cli.js render examples/scenes/launch-reel.json --brand examples/brand/brand.json -f mp4 -o reel.mp4
 node dist/agent/cli.js preview examples/scenes/launch-reel.json --brand examples/brand/brand.json   # contact sheet
 ```
+
+## Examples
+
+Three sizzle reels for [Demons](examples/demons), a test brand, cut to a 120 BPM beat. Each is one JSON scene with no video footage: type, crew illustrations, brand patterns, HTML/CSS layers animated with `@keyframes`, and a music track. Click a preview for the MP4.
+
+| Summon the crew · reel 1080×1920 · 12 s | Keeper checks · square 1080×1080 · 10 s |
+|---|---|
+| [<img src="examples/demons/videos/demons-summon-reel.gif" width="270" alt="Kinetic type reading Your brand's background crew, then Scout, Keeper, Builder and Tally popping in one per shot on coloured grounds, ending on the Demons logo.">](examples/demons/videos/demons-summon-reel.mp4) | [<img src="examples/demons/videos/demons-keeper-square.gif" width="400" alt="Keeper beside a scanner as four ad cards ride through; two get their call-to-action colour fixed and stamped, ending on With the fix, not just the flag.">](examples/demons/videos/demons-keeper-square.mp4) |
+
+| Tally's numbers · landscape 1920×1080 · 9 s |
+|---|
+| [<img src="examples/demons/videos/demons-tally-landscape.gif" width="560" alt="Odometer counters roll up to 12,480, 96% and 4,200, then Tally bobs beside a bar chart that grows bar by bar, ending on the logo over gold.">](examples/demons/videos/demons-tally-landscape.mp4) |
+
+| | Summon | Keeper | Tally |
+|---|---|---|---|
+| Layers | 49 | 13 | 15 |
+| Render time, 2-core VM | 9.7 s | 10.5 s | 11.9 s |
+| MP4 size | 1.8 MB | 1.5 MB | 1.3 MB |
+
+What each one exercises:
+- **Summon:** beat-timed hard cuts, colour wipes, per-word slams, pop-in crew that bob on the beat (generated keyframes), typewriter agent lines, a wobbling sticker, slow-turning pattern grounds.
+- **Keeper:** a conveyor of HTML cards driven by CSS `@keyframes` on scene time, a scanner beam, stamped status pills and a colour fix mid-animation.
+- **Tally:** odometer counters (digit columns slid with `translateY` inside `overflow: hidden`), a bar chart that grows with `scaleY` from its base, and a halftone end card.
+
+The scenes are in [`examples/demons/scenes`](examples/demons/scenes), generated from [`sizzle.ts`](examples/demons/sizzle.ts). `npm run demons` re-renders the MP4s, posters and contact sheets. `test/demons.test.ts` keeps them honest: the JSON must match the generator, every scene must validate with no warnings, and frames a beat apart must differ.
 
 ## Concepts
 
@@ -409,7 +434,7 @@ src/browser     Takumi WASM + Mediabunny/WebCodecs backend; routing BrowserStudi
 src/server      createRenderHandler (Request → Response)
 src/agent       tool definitions, MCP server, CLI
 test/           unit + render tests, browser capability tests, CSS conformance suite
-examples/       brand, scenes, media, Next.js routes, React hook, MCP config
+examples/       brands (Lumen, Demons), scenes, sizzle reels, media, Next.js routes, React hook, MCP config
 docs/diagrams/  the drawings in this README (source + renders)
 ```
 

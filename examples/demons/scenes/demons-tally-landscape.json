@@ -1,0 +1,383 @@
+{
+  "size": "landscape",
+  "duration": 9,
+  "fps": 30,
+  "background": "$colors.plum",
+  "layers": [
+    {
+      "id": "bg",
+      "type": "shape",
+      "fill": "$colors.plum"
+    },
+    {
+      "id": "dots",
+      "type": "image",
+      "src": "$assets.halftoneMaya",
+      "fit": "cover",
+      "opacity": 0.14,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 1.2,
+          "rotate": -3
+        },
+        {
+          "at": 9,
+          "scale": 1.4,
+          "rotate": 3,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "eyebrow",
+      "type": "text",
+      "text": "tally: this quarter",
+      "textStyle": "daemon",
+      "size": 36,
+      "color": "$colors.acid",
+      "x": 100,
+      "y": 180,
+      "width": 800,
+      "enter": {
+        "preset": "typewriter",
+        "duration": 0.6,
+        "ease": "linear"
+      },
+      "end": 4.3
+    },
+    {
+      "id": "head",
+      "type": "text",
+      "text": "The crew keeps count.",
+      "textStyle": "headline",
+      "size": 120,
+      "color": "$colors.bone",
+      "x": 100,
+      "y": 230,
+      "width": 1600,
+      "enter": {
+        "preset": "rise",
+        "duration": 0.45,
+        "ease": "outBack",
+        "delay": 0.2
+      },
+      "end": 4.3,
+      "exit": {
+        "preset": "slide-left",
+        "duration": 0.3,
+        "ease": "inCubic"
+      }
+    },
+    {
+      "id": "stats",
+      "type": "node",
+      "html": "<div class=\"wrap\">\n    <div class=\"stat\" style=\"left:100px\"><div class=\"odo a\"><span class=\"col\"><span class=\"reel\" style=\"animation:roll1 1.4s cubic-bezier(.2,.9,.1,1) 0.6s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"col\"><span class=\"reel\" style=\"animation:roll2 1.4s cubic-bezier(.2,.9,.1,1) 0.6799999999999999s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"sep\">,</span><span class=\"col\"><span class=\"reel\" style=\"animation:roll4 1.4s cubic-bezier(.2,.9,.1,1) 0.76s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"col\"><span class=\"reel\" style=\"animation:roll8 1.4s cubic-bezier(.2,.9,.1,1) 0.84s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"col\"><span class=\"reel\" style=\"animation:roll0 1.4s cubic-bezier(.2,.9,.1,1) 0.9199999999999999s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></div><div class=\"lab\" style=\"color:$colors.gold;animation:up .4s ease-out 1.5s both\">assets checked</div></div>\n    <div class=\"stat\" style=\"left:760px\"><div class=\"odo b\"><span class=\"col\"><span class=\"reel\" style=\"animation:roll9 1.4s cubic-bezier(.2,.9,.1,1) 1s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"col\"><span class=\"reel\" style=\"animation:roll6 1.4s cubic-bezier(.2,.9,.1,1) 1.08s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"sep\">%</span></div><div class=\"lab\" style=\"color:$colors.maya;animation:up .4s ease-out 1.9s both\">on brand first try</div></div>\n    <div class=\"stat\" style=\"left:1320px\"><div class=\"odo c\"><span class=\"col\"><span class=\"reel\" style=\"animation:roll4 1.4s cubic-bezier(.2,.9,.1,1) 1.4s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"sep\">,</span><span class=\"col\"><span class=\"reel\" style=\"animation:roll2 1.4s cubic-bezier(.2,.9,.1,1) 1.48s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"col\"><span class=\"reel\" style=\"animation:roll0 1.4s cubic-bezier(.2,.9,.1,1) 1.5599999999999998s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span><span class=\"col\"><span class=\"reel\" style=\"animation:roll0 1.4s cubic-bezier(.2,.9,.1,1) 1.64s both\"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></span></span></div><div class=\"lab\" style=\"color:$colors.candy;animation:up .4s ease-out 2.3s both\">fixes shipped</div></div></div>",
+      "css": "\n    .wrap{position:absolute;left:0;top:0;width:1920px;height:1080px;font-family:'Bricolage Grotesque';color:$colors.bone}\n    .stat{position:absolute;top:430px;display:flex;flex-direction:column;gap:10px}\n    .odo{display:flex;height:150px;overflow:hidden;font-size:160px;font-weight:800;line-height:150px;letter-spacing:-0.04em}\n    .col{display:flex;justify-content:center;width:0.6em;height:150px;overflow:hidden}\n    .reel{display:flex;flex-direction:column;align-items:center}\n    .reel span{height:150px;line-height:150px}\n    .sep{height:150px;line-height:150px}\n    .lab{font-family:'JetBrains Mono';font-size:40px}\n    @keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0px)}}\n    @keyframes roll0{from{transform:translateY(0px)}to{transform:translateY(-0px)}}\n@keyframes roll1{from{transform:translateY(0px)}to{transform:translateY(-150px)}}\n@keyframes roll2{from{transform:translateY(0px)}to{transform:translateY(-300px)}}\n@keyframes roll3{from{transform:translateY(0px)}to{transform:translateY(-450px)}}\n@keyframes roll4{from{transform:translateY(0px)}to{transform:translateY(-600px)}}\n@keyframes roll5{from{transform:translateY(0px)}to{transform:translateY(-750px)}}\n@keyframes roll6{from{transform:translateY(0px)}to{transform:translateY(-900px)}}\n@keyframes roll7{from{transform:translateY(0px)}to{transform:translateY(-1050px)}}\n@keyframes roll8{from{transform:translateY(0px)}to{transform:translateY(-1200px)}}\n@keyframes roll9{from{transform:translateY(0px)}to{transform:translateY(-1350px)}}\n    .chart{position:absolute;left:780px;top:330px;width:1040px;height:600px;display:flex;align-items:flex-end;gap:26px;border-bottom:4px solid $colors.raised}\n    .bar{width:96px;border-radius:18px 18px 0 0;transform-origin:50% 100%}\n    @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}\n  ",
+      "end": 4.3,
+      "exit": {
+        "preset": "drop",
+        "duration": 0.3,
+        "ease": "inCubic"
+      }
+    },
+    {
+      "id": "cut0",
+      "type": "shape",
+      "fill": "$colors.flame",
+      "start": 4.13,
+      "end": 4.529999999999999,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -2000
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 2000,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "chart-title",
+      "type": "text",
+      "text": "On brand, week by week.",
+      "textStyle": "headline",
+      "size": 110,
+      "color": "$colors.bone",
+      "x": 100,
+      "y": 110,
+      "width": 1700,
+      "start": 4.4,
+      "end": 7.3,
+      "enter": {
+        "preset": "rise",
+        "duration": 0.4
+      }
+    },
+    {
+      "id": "chart",
+      "type": "node",
+      "html": "<div class=\"wrap\"><div class=\"chart\"><div class=\"bar\" style=\"height:235px;background:$colors.gold;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 4.6s both\"></div><div class=\"bar\" style=\"height:336px;background:$colors.gold;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 4.72s both\"></div><div class=\"bar\" style=\"height:308px;background:$colors.gold;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 4.84s both\"></div><div class=\"bar\" style=\"height:437px;background:$colors.gold;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 4.96s both\"></div><div class=\"bar\" style=\"height:392px;background:$colors.gold;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 5.08s both\"></div><div class=\"bar\" style=\"height:515px;background:$colors.gold;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 5.199999999999999s both\"></div><div class=\"bar\" style=\"height:493px;background:$colors.gold;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 5.319999999999999s both\"></div><div class=\"bar\" style=\"height:560px;background:$colors.acid;animation:grow .7s cubic-bezier(.34,1.56,.64,1) 5.4399999999999995s both\"></div></div></div>",
+      "start": 4.4,
+      "end": 7.3
+    },
+    {
+      "id": "tally",
+      "type": "image",
+      "src": "$assets.tally",
+      "fit": "contain",
+      "x": 120,
+      "y": 380,
+      "width": 560,
+      "height": 560,
+      "start": 4.5,
+      "end": 7.3,
+      "enter": {
+        "preset": "pop",
+        "delay": 0,
+        "duration": 0.4,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.25,
+          "y": -33.6,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.5,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 0.75,
+          "y": -33.6,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.25,
+          "y": -33.6,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.5,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.75,
+          "y": -33.6,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 2,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 2.25,
+          "y": -33.6,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 2.5,
+          "y": 0,
+          "rotate": -5,
+          "scale": 1,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 2.75,
+          "y": -33.6,
+          "rotate": 5,
+          "scale": 1.04,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "bam",
+      "type": "text",
+      "text": "Bam!",
+      "textStyle": "sticker",
+      "size": 90,
+      "color": "$colors.ink",
+      "background": "$colors.flame",
+      "x": 1600,
+      "y": 260,
+      "padding": [
+        25,
+        45
+      ],
+      "radius": 27,
+      "start": 5.6,
+      "end": 7.3,
+      "shadow": "0 10px 0 $colors.ink",
+      "rotate": 9,
+      "enter": {
+        "preset": "pop",
+        "duration": 0.35,
+        "ease": "outBack"
+      },
+      "keyframes": [
+        {
+          "at": 0,
+          "rotate": -12
+        },
+        {
+          "at": 0.35,
+          "rotate": 8,
+          "ease": "outBack"
+        },
+        {
+          "at": 0.7,
+          "rotate": -3,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.05,
+          "rotate": 4,
+          "ease": "inOutCubic"
+        },
+        {
+          "at": 1.7000000000000002,
+          "rotate": 0,
+          "ease": "inOutCubic"
+        }
+      ]
+    },
+    {
+      "id": "cut",
+      "type": "shape",
+      "fill": "$colors.acid",
+      "start": 7.180000000000001,
+      "end": 7.58,
+      "keyframes": [
+        {
+          "at": 0,
+          "x": -2000
+        },
+        {
+          "at": 0.22,
+          "x": 0,
+          "ease": "inCubic"
+        },
+        {
+          "at": 0.4,
+          "x": 2000,
+          "ease": "outCubic"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "type": "shape",
+      "fill": "$colors.gold",
+      "start": 7.4,
+      "end": 9
+    },
+    {
+      "id": "half",
+      "type": "image",
+      "src": "$assets.halftoneMaya",
+      "fit": "cover",
+      "opacity": 0.25,
+      "start": 7.4,
+      "end": 9,
+      "keyframes": [
+        {
+          "at": 0,
+          "scale": 1.2
+        },
+        {
+          "at": 1.6,
+          "scale": 1.35,
+          "ease": "linear"
+        }
+      ]
+    },
+    {
+      "id": "logo",
+      "type": "image",
+      "src": "$assets.lockupInk",
+      "fit": "contain",
+      "x": 560,
+      "y": 380,
+      "width": 800,
+      "height": 240,
+      "start": 7.45,
+      "end": 9,
+      "enter": {
+        "preset": "zoom",
+        "duration": 0.45,
+        "ease": "outBack"
+      }
+    },
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "Your brand's background crew.",
+      "textStyle": "serif",
+      "size": 64,
+      "color": "$colors.ink",
+      "x": 160,
+      "y": 680,
+      "width": 1600,
+      "align": "center",
+      "style": {
+        "fontStyle": "italic"
+      },
+      "start": 7.8,
+      "end": 9,
+      "enter": "rise"
+    }
+  ],
+  "audio": [
+    {
+      "src": "examples/demons/audio/beat-120.mp3",
+      "trim": [
+        4,
+        13
+      ],
+      "volume": 0.8,
+      "fadeOut": 0.6
+    }
+  ]
+}

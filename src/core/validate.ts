@@ -54,7 +54,7 @@ export async function validate(sceneInput: Scene, brand: Brand, backend?: Backen
         if (l.textStyle && !brand.text[l.textStyle]) warnings.push({ path: p, message: `Unknown textStyle "${l.textStyle}". Brand styles: ${Object.keys(brand.text).join(", ") || "(none)"}` });
         const font = resolveToken(l.font ?? (l.textStyle ? brand.text[l.textStyle]?.font : undefined) ?? "", brand);
         if (font && families.size && !families.has(font.toLowerCase())) warnings.push({ path: p, message: `Font "${font}" is not in brand.fontFaces; it will fall back.` });
-        const bg = resolveToken(l.background ?? scene.background ?? brand.defaults.background ?? "", brand);
+        const bg = resolveToken(l.background ?? backdropAt(layers, i, l.start ?? 0) ?? scene.background ?? brand.defaults.background ?? "", brand);
         const fg = resolveToken(l.color ?? (l.textStyle ? brand.text[l.textStyle]?.color : undefined) ?? scene.color ?? brand.defaults.color ?? "", brand);
         const ratio = contrast(fg, bg);
         if (ratio !== null && ratio < 3) warnings.push({ path: p, message: `Low contrast ${ratio.toFixed(2)}:1 between text ${fg} and background ${bg} (aim for 4.5:1, 3:1 for large type)` });
@@ -91,6 +91,25 @@ function knownTokens(brand: Brand) {
   for (const k of Object.keys(brand.fonts)) out.push(`$fonts.${k}`);
   for (const k of Object.keys(brand.assets)) out.push(`$assets.${k}`);
   return out;
+}
+
+/**
+ * What sits behind layer `i` when it starts: the last earlier full-frame layer that is showing
+ * at that moment. A solid shape gives its fill; an image or video gives "" (unknown, so the
+ * contrast check is skipped). Moving or translucent shapes (wipes, scrims) are ignored.
+ */
+function backdropAt(layers: Layer[], i: number, t: number): string | undefined {
+  for (let j = i - 1; j >= 0; j--) {
+    const b = layers[j]!;
+    const full = b.position === undefined && b.x === undefined && b.y === undefined && b.width === undefined && b.height === undefined;
+    if (!full || (b.start ?? 0) > t || (b.end !== undefined && b.end <= t)) continue;
+    if (b.type === "image" || b.type === "video" || b.type === "source") {
+      if ((b.opacity ?? 1) >= 0.5) return "";
+      continue;
+    }
+    if (b.type === "shape" && !b.keyframes?.length && (b.opacity ?? 1) === 1 && b.fill) return b.fill;
+  }
+  return undefined;
 }
 
 /* WCAG contrast for solid hex/rgb colors; null when either side isn't a plain color. */

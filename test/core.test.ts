@@ -79,3 +79,19 @@ test("contrast follows WCAG", () => {
   assert.equal(Math.round(contrast("#000", "#fff")!), 21);
   assert.equal(contrast("linear-gradient(red, blue)", "#fff"), null);
 });
+
+test("contrast checks text against the ground showing when it starts", async () => {
+  const { validate } = await import("../src/core/validate.js");
+  const brand = parseBrand({ name: "t", colors: { ink: "#111111", bone: "#fafafa" } });
+  const scene: Scene = {
+    size: "square", duration: 4, background: "$colors.ink",
+    layers: [
+      { id: "light", type: "shape", fill: "$colors.bone", start: 2, end: 4 },
+      { id: "early", type: "text", text: "on ink", color: "$colors.bone", start: 0, end: 2 },
+      { id: "late", type: "text", text: "on bone", color: "$colors.ink", start: 2, end: 4 },
+      { id: "bad", type: "text", text: "bone on bone", color: "$colors.bone", start: 2.5, end: 4 },
+    ],
+  };
+  const r = await validate(scene, brand);
+  assert.deepEqual(r.warnings.map((w) => w.path), ["[3](bad)"].map((p) => `layers${p}`));
+});
