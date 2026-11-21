@@ -6,3 +6,4 @@ scout-out
 test/browser/bundle.js
 test/browser/page.js
 test/browser/worker.js
+.plotter
