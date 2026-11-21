@@ -1,0 +1,11 @@
+import { createNodeStudio, loadBrand } from "../src/node/index.js";
+import { createAgentTools } from "../src/agent/index.js";
+import { writeFileSync } from "node:fs";
+const studio = createNodeStudio({ brand: await loadBrand("examples/brand/brand.json") });
+const tools = createAgentTools(studio, { outDir: "out/agent" });
+const r = await tools.call("render", { template: "quote-card", props: { quote: "Edits are just ops.", author: "Scout" }, format: "mp4" });
+const img = r.content.find((c) => c.type === "image") as any;
+writeFileSync("out/agent-look.png", Buffer.from(img.data, "base64"));
+const e = await tools.call("edit_scene", { sceneId: (r.structured as any).sceneId, ops: [{ op: "set", target: "quote", path: "text", value: "Edits are just small JSON ops." }, { op: "set", target: "scene", path: "background", value: "$colors.accent" }] });
+writeFileSync("out/agent-edit.png", Buffer.from((e.content[0] as any).data, "base64"));
+console.log(e.content[1]);

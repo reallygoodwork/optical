@@ -1,0 +1,75 @@
+{
+  "name": "@scout/render",
+  "version": "0.1.0",
+  "description": "Brand-aware rendering for agents: PNG, JPEG, WebP, GIF, MP4, WebM, SVG and PDF from one JSON scene. Renders on the user's device when it can, on the server when it should.",
+  "type": "module",
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.ts",
+      "import": "./dist/node/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser/index.d.ts",
+      "import": "./dist/browser/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js"
+    },
+    "./agent": {
+      "types": "./dist/agent/index.d.ts",
+      "import": "./dist/agent/index.js"
+    }
+  },
+  "bin": {
+    "scout-render": "./dist/agent/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "AGENTS.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts",
+    "demo": "tsx scripts/demo.ts",
+    "bench": "tsx scripts/bench.ts",
+    "test:browser": "tsx test/browser/run.ts",
+    "test:conformance": "tsx test/conformance/run.ts",
+    "test:all": "npm run typecheck && npm test && npm run test:browser && npm run test:conformance"
+  },
+  "dependencies": {
+    "@takumi-rs/core": "2.22.1",
+    "@takumi-rs/helpers": "^2.22.1",
+    "@takumi-rs/wasm": "2.22.1",
+    "mediabunny": "^1.66.2",
+    "takumi-pdf": "^0.21.2",
+    "zod": "^4.1.0"
+  },
+  "optionalDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@myriaddreamin/typst-ts-node-compiler": "^0.7.0"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.1.1",
+    "@types/node": "^22.0.0",
+    "@types/pngjs": "^6.0.5",
+    "esbuild": "^0.28.2",
+    "pixelmatch": "^8.0.0",
+    "playwright": "^1.65.1",
+    "pngjs": "^7.0.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

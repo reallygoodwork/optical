@@ -1,0 +1,20 @@
+# Free, keeps Takumi/Mediabunny/actions current. When a Takumi bump lands, the CI comment shows
+# exactly which CSS features changed; run "Update conformance baseline" to accept improvements.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      takumi:
+        patterns: ["@takumi-rs/*", "takumi-*"]
+      media:
+        patterns: ["mediabunny", "@myriaddreamin/*"]
+      dev:
+        dependency-type: development
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

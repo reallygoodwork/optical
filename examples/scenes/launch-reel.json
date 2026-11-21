@@ -1,0 +1,12 @@
+{
+  "size": "reel",
+  "duration": 6,
+  "layers": [
+    { "id": "bg", "type": "video", "src": "examples/media/clip.mp4", "loop": true, "volume": 0, "keyframes": [{ "at": 0, "scale": 1.08 }, { "at": 6, "scale": 1, "ease": "linear" }] },
+    { "id": "scrim", "type": "shape", "fill": "linear-gradient(180deg, rgba(20,18,31,0) 35%, $colors.ink 100%)" },
+    { "id": "logo", "type": "image", "src": "$assets.logoOnDark", "width": 220, "height": 80, "fit": "contain", "position": "top-left", "enter": "fade" },
+    { "id": "eyebrow", "type": "text", "text": "Fall drop", "textStyle": "eyebrow", "size": 36, "color": "$colors.accent", "position": "bottom-left", "margin": 72, "y": 0, "enter": { "preset": "fade", "delay": 0.2 }, "style": { "marginBottom": 560 } },
+    { "id": "headline", "type": "text", "text": "Twenty percent off everything this weekend", "textStyle": "display", "size": 132, "color": "#ffffff", "width": "86%", "height": 460, "position": "bottom-left", "enter": { "preset": "rise", "delay": 0.35 }, "exit": "fade" }
+  ],
+  "audio": [{ "src": "examples/media/music.mp3", "volume": 0.7, "fadeIn": 0.3, "fadeOut": 1 }]
+}

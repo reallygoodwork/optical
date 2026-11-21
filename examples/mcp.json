@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "scout-render": {
+      "command": "npx",
+      "args": ["-y", "scout-render", "mcp", "--brand", "/absolute/path/to/brand.json", "--out", "/absolute/path/to/scout-out"]
+    }
+  }
+}

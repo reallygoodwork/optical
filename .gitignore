@@ -1,0 +1,8 @@
+node_modules
+dist
+out
+scout-out
+*.wasm
+test/browser/bundle.js
+test/browser/page.js
+test/browser/worker.js

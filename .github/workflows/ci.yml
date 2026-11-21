@@ -1,0 +1,108 @@
+# Runs on every pull request. Free on public repos (standard GitHub-hosted runners);
+# on private repos a typical run bills ~4–5 of the plan's included minutes (2 jobs, ~2 min each).
+name: CI
+
+on:
+  pull_request:
+    paths-ignore: ["**.md", "docs/**"]
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "docs/**"]
+  workflow_dispatch:
+
+# A new push to the same PR cancels the run in progress instead of paying for both.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Typecheck, unit + render tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+
+  browser:
+    name: Browser capabilities + CSS conformance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write # sticky PR comment with the results
+    env:
+      # ubuntu-latest ships Google Chrome; using it avoids a ~150 MB Playwright browser download.
+      CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install ffmpeg + test fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends ffmpeg fonts-noto-color-emoji
+      - run: npm ci
+
+      - name: Browser capabilities (WASM, WebCodecs, Canvas, WebGL, WebGPU, Workers)
+        id: browser
+        run: npm run test:browser
+        continue-on-error: true
+
+      - name: CSS conformance vs Chrome
+        id: conformance
+        run: npm run test:conformance
+        continue-on-error: true
+
+      - name: Job summary
+        if: always()
+        run: |
+          cat out/browser/report.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          cat out/conformance/report.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Upload images (Chrome | Takumi | diff)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: render-reports
+          path: |
+            out/browser
+            out/conformance
+          retention-days: 7 # keeps artifact storage tiny
+
+      # Fork PRs get a read-only token, so only comment on same-repo PRs. The summary above always shows.
+      - name: Sticky PR comment
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require("fs");
+            const read = (p) => (fs.existsSync(p) ? fs.readFileSync(p, "utf8") : "");
+            const marker = "<!-- scout-render-report -->";
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [marker, read("out/conformance/report.md"), read("out/browser/report.md"), `\n[Images and full logs](${run})`].join("\n\n").slice(0, 65000);
+            const { data: comments } = await github.rest.issues.listComments({ ...context.repo, issue_number: context.issue.number, per_page: 100 });
+            const mine = comments.find((c) => c.body?.includes(marker));
+            if (mine) await github.rest.issues.updateComment({ ...context.repo, comment_id: mine.id, body });
+            else await github.rest.issues.createComment({ ...context.repo, issue_number: context.issue.number, body });
+
+      - name: Fail on browser failures or CSS regressions
+        if: steps.browser.outcome == 'failure' || steps.conformance.outcome == 'failure'
+        run: |
+          echo "::error::Browser checks or CSS conformance regressed. See the job summary and the render-reports artifact."
+          exit 1

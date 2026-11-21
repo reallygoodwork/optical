@@ -1,0 +1,15 @@
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+const t = new StdioClientTransport({ command: "node", args: ["dist/agent/cli.js", "mcp", "--brand", "examples/brand/brand.json", "--out", "out/mcp"] });
+const c = new Client({ name: "test", version: "1" });
+await c.connect(t);
+const tools = await c.listTools();
+console.log("tools:", tools.tools.map((x) => x.name).join(", "));
+const show = (r: any) => r.content.map((x: any) => (x.type === "image" ? `[image ${x.mimeType} ${Math.round(x.data.length * 0.75 / 1024)}KB]` : x.text.slice(0, 400))).join("\n");
+console.log(show(await c.callTool({ name: "render", arguments: { template: "title-card", props: { title: "Agents render brand assets now", kicker: "Scout" }, sizes: ["og", "square", "instagram-story"], formats: ["png"] } })));
+const r = await c.callTool({ name: "render", arguments: { template: "quote-card", props: { quote: "Edits are just ops.", author: "Scout" }, format: "mp4" } }) as any;
+console.log(show(r));
+const sceneId = r.structuredContent.sceneId;
+console.log(show(await c.callTool({ name: "edit_scene", arguments: { sceneId, ops: [{ op: "set", target: "quote", path: "text", value: "Edits are just small JSON ops." }, { op: "set", target: "scene", path: "background", value: "$colors.accent" }] } })));
+console.log(show(await c.callTool({ name: "validate", arguments: { scene: { layers: [{ type: "text", text: "hi", color: "$colors.nope", background: "#fff" }, { type: "text", id: "x", text: "low", color: "#eee", background: "#fff" }] } } })));
+await c.close();
