@@ -115,11 +115,11 @@ export class BrowserBackend implements Backend {
     return { width: m.width, height: m.height };
   }
 
-  async renderAnimation(frames: TNode[], o: { width: number; height: number; fps: number; format: "gif" | "apng" | "webp"; dpr?: number; quality?: number; images?: ImageBytes[]; css?: string[] }) {
+  async renderAnimation(frames: TNode[], o: { width: number; height: number; fps: number; durations?: number[]; format: "gif" | "apng" | "webp"; dpr?: number; quality?: number; images?: ImageBytes[]; css?: string[] }) {
     const { renderer } = await this.takumi;
     const dpr = o.dpr ?? 1;
     return renderer.renderAnimation({
-      scenes: frames.map((node, i) => ({ node: node as any, durationMs: frameMs(i, o.fps) })),
+      scenes: frames.map((node, i) => ({ node: node as any, durationMs: o.durations?.[i] ?? frameMs(i, o.fps) })),
       width: Math.round(o.width * dpr), height: Math.round(o.height * dpr), fps: o.fps, format: o.format, devicePixelRatio: dpr,
       ...(o.format === "webp" ? { quality: o.quality ?? 80 } : {}),
       images: o.images,

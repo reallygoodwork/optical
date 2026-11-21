@@ -3,7 +3,7 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { readFile, writeFile, mkdtemp, rm } from "node:fs/promises";
 import { availableParallelism, tmpdir } from "node:os";
 import { join, dirname, resolve, isAbsolute } from "node:path";
-import type { AudioClip, Backend, FontFaceInput, ImageBytes, VideoEncodeOptions, VideoReader, VideoReadOptions, VideoSink } from "../core/backend.js";
+import type { AudioClip, Backend, BaseVideo, FontFaceInput, ImageBytes, VideoEncodeOptions, VideoReader, VideoReadOptions, VideoSink } from "../core/backend.js";
 import type { RgbaImage, TNode } from "../core/compile.js";
 import type { MediaInfo } from "../core/prepare.js";
 import { Studio, type RenderInput, type StudioOptions } from "../core/studio.js";
@@ -25,6 +25,7 @@ export interface NodeBackendOptions {
 
 export class NodeBackend implements Backend {
   readonly name = "node" as const;
+  readonly supportsBaseVideo = true;
   readonly concurrency: number;
   readonly renderer = new Renderer();
   private ffmpeg: string;
@@ -101,9 +102,9 @@ export class NodeBackend implements Backend {
     return { width: m.width, height: m.height };
   }
 
-  renderAnimation(frames: TNode[], o: { width: number; height: number; fps: number; format: "gif" | "apng" | "webp"; dpr?: number; quality?: number; images?: ImageBytes[]; css?: string[] }) {
+  renderAnimation(frames: TNode[], o: { width: number; height: number; fps: number; durations?: number[]; format: "gif" | "apng" | "webp"; dpr?: number; quality?: number; images?: ImageBytes[]; css?: string[] }) {
     return this.renderer.renderAnimation({
-      scenes: frames.map((node, i) => ({ node: node as any, durationMs: Math.round(((i + 1) * 1000) / o.fps) - Math.round((i * 1000) / o.fps) })),
+      scenes: frames.map((node, i) => ({ node: node as any, durationMs: o.durations?.[i] ?? Math.round(((i + 1) * 1000) / o.fps) - Math.round((i * 1000) / o.fps) })),
       width: Math.round(o.width * (o.dpr ?? 1)), height: Math.round(o.height * (o.dpr ?? 1)), fps: o.fps, format: o.format, devicePixelRatio: o.dpr ?? 1,
       ...(o.format === "webp" ? { quality: o.quality ?? 80 } : {}),
       images: o.images,
@@ -172,13 +173,40 @@ export class NodeBackend implements Backend {
     return p;
   }
 
+  /** One ffmpeg pass that keeps only the requested timestamps: far cheaper than N seeks. */
+  async videoFramesAt(src: string, times: number[], o: { width: number; height: number; fit: "cover" | "contain" | "fill" }): Promise<(RgbaImage | null)[]> {
+    if (times.length <= 1) return Promise.all(times.map((t) => this.videoFrameAt(src, t, o)));
+    const info = await this.probe(src);
+    if (!info.fps) return Promise.all(times.map((t) => this.videoFrameAt(src, t, o)));
+    const clamp = (t: number) => Math.max(0, Math.min(t, Math.max(0, info.duration - 1 / info.fps!)));
+    const sorted = [...new Set(times.map(clamp))].sort((a, b) => a - b);
+    const start = sorted[0]!;
+    const idx = sorted.map((t) => Math.round((t - start) * info.fps!));
+    const sel = [...new Set(idx)].map((n) => `eq(n,${n})`).join("+");
+    const buf = await run(this.ffmpeg, ["-v", "error", "-nostdin", "-ss", String(start), "-i", mediaPath(src), "-an", "-frames:v", String(idx[idx.length - 1]! + 1), "-vf", `select='${sel}',${fitFilter(o.width, o.height, o.fit)}`, "-vsync", "0", "-f", "rawvideo", "-pix_fmt", "rgba", "pipe:1"]);
+    const size = o.width * o.height * 4;
+    const frames = Array.from({ length: Math.floor(buf.length / size) }, (_, i) => ({ width: o.width, height: o.height, data: new Uint8Array(buf.buffer, buf.byteOffset + i * size, size) }));
+    const uniq = [...new Set(idx)];
+    const byTime = new Map(sorted.map((t, i) => [t, frames[uniq.indexOf(idx[i]!)] ?? frames[frames.length - 1] ?? null]));
+    return times.map((t) => byTime.get(clamp(t)) ?? null);
+  }
+
   async encodeVideo(o: VideoEncodeOptions): Promise<VideoSink> {
     const dir = await mkdtemp(join(tmpdir(), "scout-"));
     const out = join(dir, `out.${o.format}`);
     const args = ["-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgba", "-s", `${o.width}x${o.height}`, "-r", String(o.fps), "-i", "pipe:0"];
-    const audio = audioArgs(o.audio, o.duration);
+    const filters: string[] = [];
+    let vmap = "0:v";
+    if (o.base) {
+      args.push(...baseInputArgs(o.base, o.fps));
+      filters.push(baseFilter(o.base, o.width, o.height, o.fps));
+      vmap = "[v]";
+    }
+    const audio = audioArgs(o.audio, o.duration, o.base ? 2 : 1);
     args.push(...audio.inputs);
-    if (audio.filter) args.push("-filter_complex", audio.filter, "-map", "0:v", "-map", "[aout]");
+    if (audio.filter) filters.push(audio.filter);
+    if (filters.length) args.push("-filter_complex", filters.join(";"), "-map", vmap);
+    if (audio.filter) args.push("-map", "[aout]");
     const q = Math.max(0, Math.min(100, o.quality));
     if (o.format === "mp4") {
       const crf = Math.round(35 - (q / 100) * 20); // q75 -> crf 20
@@ -317,14 +345,52 @@ function fitFilter(w: number, h: number, fit: "cover" | "contain" | "fill") {
   return `crop='min(iw,ih*${w}/${h})':'min(ih,iw*${h}/${w})',scale=${w}:${h}:flags=bicubic,format=rgba`;
 }
 
-function audioArgs(clips: AudioClip[], duration: number) {
+function baseInputArgs(b: BaseVideo, fps: number) {
+  const a: string[] = [];
+  if (b.loop) a.push("-stream_loop", "-1");
+  const start = b.trimIn + b.timeOffset * b.speed;
+  a.push("-ss", String(start));
+  if (b.trimOut !== undefined && !b.loop) a.push("-t", String(Math.max(0.01, b.trimOut - start)));
+  a.push("-i", mediaPath(b.src));
+  return a;
+}
+
+/** [1:v] → speed, fps, cover crop, scale, optional zoom, hold last frame → overlay [0:v] on top → [v] */
+function baseFilter(b: BaseVideo, w: number, h: number, fps: number) {
+  const f: string[] = [`setpts=(PTS-STARTPTS)/${b.speed}`, `fps=${fps}`];
+  if (b.fit === "cover") f.push(`crop='min(iw,ih*${w}/${h})':'min(ih,iw*${h}/${w})'`);
+  if (b.zoom?.length && !(b.zoom.length === 1 && b.zoom[0]![1] === 1)) {
+    // Zoom: resize per frame, then crop the centre. The crop offset is computed from the same
+    // zoom formula because ffmpeg's crop centring uses the first frame's size after a resize.
+    const z = `(${zoomExpr(b.zoom, b.timeOffset)})`;
+    const zw = `trunc(${w}*${z}/2)*2`, zh = `trunc(${h}*${z}/2)*2`;
+    f.push(`scale=w='${zw}':h='${zh}':eval=frame:flags=bilinear`, `crop=w=${w}:h=${h}:x='(${zw}-${w})/2':y='(${zh}-${h})/2'`);
+  } else f.push(`scale=${w}:${h}:flags=bilinear`);
+  f.push("setsar=1", "tpad=stop_mode=clone:stop=-1");
+  return `[1:v]${f.join(",")}[bg];[bg][0:v]overlay=format=auto:shortest=1,format=yuv420p[v]`;
+}
+
+/** Piecewise-linear zoom as an ffmpeg expression of frame time `t` (scene seconds). */
+function zoomExpr(pts: [number, number][], offset: number) {
+  const T = offset ? `(t+${offset})` : "t";
+  const sorted = [...pts].sort((a, b) => a[0] - b[0]);
+  let e = String(sorted[sorted.length - 1]![1]);
+  for (let i = sorted.length - 1; i > 0; i--) {
+    const [t0, v0] = sorted[i - 1]!, [t1, v1] = sorted[i]!;
+    const seg = t1 > t0 ? `${v0}+(${v1 - v0})*(${T}-${t0})/${t1 - t0}` : String(v1);
+    e = `if(lt(${T},${t1}),${seg},${e})`;
+  }
+  return `if(lt(${T},${sorted[0]![0]}),${sorted[0]![1]},${e})`;
+}
+
+function audioArgs(clips: AudioClip[], duration: number, firstIndex = 1) {
   if (!clips.length) return { inputs: [] as string[], filter: "" };
   const inputs: string[] = [];
   const chains: string[] = [];
   clips.forEach((c, i) => {
     if (c.loop) inputs.push("-stream_loop", "-1");
     inputs.push("-i", mediaPath(c.src));
-    const idx = i + 1;
+    const idx = i + firstIndex;
     const f: string[] = [];
     if (c.trimIn || c.trimOut !== undefined) f.push(`atrim=start=${c.trimIn}${c.trimOut !== undefined ? `:end=${c.trimOut}` : ""}`);
     f.push("asetpts=PTS-STARTPTS");

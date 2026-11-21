@@ -203,23 +203,29 @@ npm run test:all
 
 ## Numbers
 
-2-vCPU Xeon @ 2.3 GHz (a small cloud VM), Node 22. Expect roughly linear speedups with more cores.
+2-vCPU Xeon @ 2.3 GHz (a small cloud VM), Node 22. CPU includes ffmpeg child processes (`npm run perf`, median of 5).
 
-| Output | Time | Size |
-|---|---:|---:|
-| OG card PNG 1200×630 | 13 ms | 10 KB |
-| Quote JPEG 1080² | 30 ms | 39 KB |
-| Story PNG w/ video frame 1080×1920 | 358 ms | 155 KB |
-| Stat GIF 2 s → 720² | 147 ms | 96 KB |
-| Quote MP4 5 s 1080² | 1.1 s | 27 KB |
-| Story MP4 6 s 1080×1920, text only | 2.1 s | 35 KB |
-| Story MP4 6 s 1080×1920, video background | 6.3 s | 1.0 MB |
-| Same, half-res draft (`scale: 0.5`) | 2.2 s | 429 KB |
-| PDF page | 95 ms | 5 KB |
-| Contact sheet, 9 frames | 1.3 s | 353 KB |
-| Cache hit | < 1 ms | — |
+| Output | Wall | CPU | Size |
+|---|---:|---:|---:|
+| OG card PNG 1200×630 | 12 ms | ~0 | 10 KB |
+| Quote JPEG 1080² | 33 ms | 35 ms | 39 KB |
+| 3 sizes PNG (variants) | 28 ms | 30 ms | 18 KB |
+| Stat GIF 2 s → 720² | 144 ms | 249 ms | 96 KB |
+| Quote MP4 5 s 1080² | 840 ms | 1.3 s | 27 KB |
+| Story MP4 6 s 1080×1920, text motion | 1.6 s | 2.9 s | 58 KB |
+| Story MP4 6 s 1080×1920, video background + Ken Burns | 4.9 s | 8.1 s | 1.0 MB |
+| HTML/CSS layer MP4 3 s | 532 ms | 930 ms | 43 KB |
+| Contact sheet of a video scene | 432 ms | 666 ms | 353 KB |
+| Cache hit | < 1 ms | — | — |
 
-Headless Chrome (software only, no GPU), browser build: quote PNG 110 ms; 540×960 6 s MP4 with a video background 4.2 s; 3 s MP4 with music 0.3 s.
+### How it stays cheap on servers
+
+- **Frame reuse.** Every compiled frame is fingerprinted, and identical frames (settled motion, held video) skip rasterisation. A typical 5–6 s brand clip rasterises 20–25% of its frames. Animated GIF/WebP merge identical runs into one longer frame.
+- **Encoder-side compositing for background video.** When the bottom layer is a full-frame video (optionally with a linear Ken Burns zoom), ffmpeg decodes, scales and zooms it and composites a transparent overlay that Takumi renders from everything else. Node CPU for that render drops ~88%, and the overlay is mostly static, so frame reuse applies. A test keeps it visually equivalent to the reference path (SSIM ≥ 0.99). Anything the encoder can't reproduce exactly (rounded corners, opacity, enter/exit, eased keyframes, `contain`) falls back automatically. Disable with `studio.fastPaths = false`.
+- **One-pass preview decoding.** Contact sheets pull every sampled video frame from a single decode instead of one seek per thumbnail (5× faster, identical pixels).
+- **Decode at source resolution.** Video is never decoded larger than its source; upscaling happens once, late.
+- **Encoder settings chosen by measurement.** x264 `veryfast`/CRF 20 is the cost frontier: `superfast` saves no CPU and is 1.5–2.5× larger, `ultrafast` saves ~35% CPU but is 3–4× larger (bandwidth costs more than the CPU it saves), and `faster` costs ~70% more CPU for the same size.
+- **Cache keys** cover scene, brand, format and options, so repeat requests never render.
 
 ## Limits worth knowing
 

@@ -1,6 +1,6 @@
 import { test, before } from "node:test";
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -214,3 +214,34 @@ test("html layers: browser CSS (grid, :has, color-mix, tokens) and @keyframes dr
   const svg = new TextDecoder().decode((await studio.render(scene, { format: "svg", fresh: true })).data);
   assert.match(svg.toLowerCase(), /#2a1b5c|rgb\(42,\s*27,\s*92\)/, ":has() applied brand token color to the title");
 });
+
+test("fast paths: encoder-composited background video matches the reference path (SSIM ≥ 0.99), frame reuse skips static frames", async () => {
+  const input = { template: "announcement", props: { headline: "Fast path", media: CLIP } };
+  studio.fastPaths = false;
+  const ref = await studio.render(input, { format: "mp4", scale: 0.5, fresh: true });
+  studio.fastPaths = true;
+  const fast = await studio.render(input, { format: "mp4", scale: 0.5, fresh: true });
+  assert.ok(studio.lastStats.rendered < studio.lastStats.frames / 2, `overlay frames reused: ${JSON.stringify(studio.lastStats)}`);
+  const a = join(tmp, "ref.mp4"), b = join(tmp, "fast.mp4");
+  writeFileSync(a, ref.data);
+  writeFileSync(b, fast.data);
+  const ssim = execSsim(a, b);
+  assert.ok(ssim >= 0.99, `SSIM ${ssim}`);
+  assert.equal(probe(fast.data, "mp4").streams[0].nb_frames, probe(ref.data, "mp4").streams[0].nb_frames);
+});
+
+test("batched preview frames equal per-seek frames", async () => {
+  const input = { template: "announcement", props: { headline: "Preview", media: CLIP } };
+  const be: any = studio.backend;
+  const batched = be.videoFramesAt;
+  be.videoFramesAt = undefined;
+  const slow = await studio.preview(input, { frames: 6 });
+  be.videoFramesAt = batched;
+  const fast = await studio.preview(input, { frames: 6 });
+  assert.deepEqual(fast.data, slow.data);
+});
+
+function execSsim(a: string, b: string) {
+  const r = spawnSync("ffmpeg", ["-i", b, "-i", a, "-lavfi", "ssim", "-f", "null", "-"], { encoding: "utf8" });
+  return Number(/All:([\d.]+)/.exec(r.stderr)?.[1] ?? 0);
+}

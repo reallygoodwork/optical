@@ -56,6 +56,24 @@ export interface AudioClip {
   fadeOut?: number;
 }
 
+/**
+ * A full-frame background video the encoder composites itself (decode → scale → overlay in
+ * ffmpeg), under RGBA overlay frames that carry everything else. Much cheaper than pulling every
+ * video frame through the layout engine.
+ */
+export interface BaseVideo {
+  src: string;
+  trimIn: number;
+  trimOut?: number;
+  speed: number;
+  loop: boolean;
+  fit: "cover" | "fill";
+  /** piecewise-linear zoom as [time, scale] points (scene seconds), e.g. Ken Burns */
+  zoom?: [number, number][];
+  /** scene time of the first output frame (for chunked renders) */
+  timeOffset: number;
+}
+
 export interface VideoEncodeOptions {
   width: number;
   height: number;
@@ -65,6 +83,8 @@ export interface VideoEncodeOptions {
   quality: number;
   duration: number;
   audio: AudioClip[];
+  /** composite this video under the frames (only when `supportsBaseVideo`) */
+  base?: BaseVideo;
   signal?: AbortSignal;
 }
 
@@ -96,13 +116,17 @@ export interface Backend {
   render(node: TNode, opts: RenderFrameOptions): Promise<Uint8Array>;
   renderSvg(node: TNode, opts: { width: number; height: number; images?: ImageBytes[]; css?: string[] }): Promise<string>;
   measure(node: TNode): Promise<{ width: number; height: number }>;
-  renderAnimation(frames: TNode[], opts: { width: number; height: number; fps: number; format: AnimFormat; dpr?: number; quality?: number; images?: ImageBytes[]; css?: string[] }): Promise<Uint8Array>;
+  renderAnimation(frames: TNode[], opts: { width: number; height: number; fps: number; /** ms per frame; defaults to 1000/fps */ durations?: number[]; format: AnimFormat; dpr?: number; quality?: number; images?: ImageBytes[]; css?: string[] }): Promise<Uint8Array>;
   pdf(pages: TNode[], opts: { width: number; height: number; images?: ImageBytes[]; title?: string; css?: string[] }): Promise<Uint8Array>;
   openVideo(src: string, opts: VideoReadOptions): Promise<VideoReader>;
   videoFrameAt(src: string, time: number, opts: { width: number; height: number; fit: "cover" | "contain" | "fill" }): Promise<RgbaImage | null>;
   encodeVideo(opts: VideoEncodeOptions): Promise<VideoSink>;
+  /** Several frames from one decode pass (times ascending). Optional; falls back to videoFrameAt. */
+  videoFramesAt?(src: string, times: number[], opts: { width: number; height: number; fit: "cover" | "contain" | "fill" }): Promise<(RgbaImage | null)[]>;
   /** Optional long-form document engine. */
   typst?(source: string, opts: { inputs?: Record<string, string>; fontFiles?: Uint8Array[] }): Promise<Uint8Array>;
+  /** Encoder can composite a background video itself (VideoEncodeOptions.base). */
+  readonly supportsBaseVideo?: boolean;
   /** Can this backend encode this video format right now? */
   canEncode?(format: VideoFormat): Promise<boolean>;
 }

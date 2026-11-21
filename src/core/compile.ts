@@ -68,7 +68,7 @@ export function compileFrame(ps: PreparedScene, t: number, media: FrameMedia): T
       position: "relative",
       overflow: "hidden",
       display: "flex",
-      ...paint(scene.background ?? brand.defaults.background ?? "#ffffff"),
+      ...(ps.transparent ? {} : paint(scene.background ?? brand.defaults.background ?? "#ffffff")),
       color: scene.color ?? brand.defaults.color ?? "#000000",
       ...(scene.font || brand.defaults.font || brand.fonts.body ? { fontFamily: scene.font ?? brand.defaults.font ?? brand.fonts.body } : {}),
     },

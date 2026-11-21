@@ -1,4 +1,4 @@
-import type { Backend, ImageBytes, VideoReader } from "./backend.js";
+import type { Backend, BaseVideo, ImageBytes, VideoReader } from "./backend.js";
 import { compileFrame, measureNode, type RgbaImage, type TNode } from "./compile.js";
 import { hashValue } from "./hash.js";
 import { settleTime } from "./motion.js";
@@ -91,6 +91,10 @@ export class Studio {
   readonly brand: Brand;
   readonly templates = new Map<string, Template<any>>();
   readonly sources = new Map<string, SourceDefinition>();
+  /** Frames in the last video/animation render vs frames actually rasterised (the rest were reused). */
+  lastStats: { frames: number; rendered: number } = { frames: 0, rendered: 0 };
+  /** Use encoder-side compositing for full-frame background videos when the scene allows it. */
+  fastPaths = true;
   private fontsReady: Promise<void> | null = null;
   private images = new Map<string, Promise<Uint8Array>>();
   private mem = new Map<string, { data: Uint8Array; meta: any }>();
@@ -202,10 +206,25 @@ export class Studio {
     const scale = Math.min(1, thumbW / ps.width);
     const tw = Math.round(ps.width * scale), th = Math.round(ps.height * scale);
     const times = count === 1 ? [this.heroTime(ps)] : Array.from({ length: count }, (_, i) => Math.min(ps.duration - 1 / ps.fps, (i / (count - 1)) * ps.duration));
+    // One decode pass per video layer for all sampled times, instead of one seek per thumbnail.
+    const prefetched = new Map<string, RgbaImage | null>();
+    if (this.backend.videoFramesAt && times.length > 1) {
+      await Promise.all(
+        ps.videos.map(async (pl) => {
+          const l = pl.layer as Extract<typeof pl.layer, { type: "video" }>;
+          const locals = times.map((t) => videoLocalTime(pl, t));
+          const want = locals.map((x, i) => [x, i] as const).filter(([x]) => x !== null) as [number, number][];
+          const d = decodeSize(pl, scale);
+          const got = await this.backend.videoFramesAt!(l.src, want.map(([x]) => x), { width: d.w, height: d.h, fit: l.fit ?? "cover" });
+          want.forEach(([, i], k) => prefetched.set(`${pl.id}@${times[i]}`, got[k] ?? null));
+          locals.forEach((x, i) => x === null && prefetched.set(`${pl.id}@${times[i]}`, null));
+        }),
+      );
+    }
     const stopSources = await this.startSources(ps, scale);
     const nodes: TNode[] = [];
     try {
-      for (const t of times) nodes.push(await this.frameAt(ps, t, scale)); // sources run in time order
+      for (const t of times) nodes.push(await this.frameAt(ps, t, scale, prefetched)); // sources run in time order
     } finally {
       await stopSources();
     }
@@ -355,10 +374,12 @@ export class Studio {
   }
 
   /** Frame node at time t, fetching single video frames on demand (for stills). */
-  private async frameAt(ps: PreparedScene, t: number, scale: number): Promise<TNode> {
+  private async frameAt(ps: PreparedScene, t: number, scale: number, prefetched?: Map<string, RgbaImage | null>): Promise<TNode> {
     const frames = new Map<string, RgbaImage | null>();
     await Promise.all(
       ps.videos.map(async (pl) => {
+        const key = `${pl.id}@${t}`;
+        if (prefetched?.has(key)) return frames.set(pl.id, prefetched.get(key)!);
         const local = videoLocalTime(pl, t);
         if (local === null) return frames.set(pl.id, null);
         const l = pl.layer as Extract<typeof pl.layer, { type: "video" }>;
@@ -413,6 +434,10 @@ export class Studio {
     const [from, to] = this.frameRange(ps, o);
     const readers = await this.openReaders(ps, scale, from);
     const window = Math.max(1, this.backend.concurrency);
+    const timeCss = hasTimeCss(ps.css);
+    let prevSig: string | null = null;
+    let prevOut: Promise<Uint8Array> | null = null;
+    let rendered = 0;
     try {
       for (let i = from; i < to; i += window) {
         o.signal?.throwIfAborted();
@@ -425,13 +450,26 @@ export class Studio {
           const sf = ps.sources.length ? await this.sourceFrames(ps, f / ps.fps, f, scale) : null;
           nodes.push(compileFrame(ps, f / ps.fps, { video: (id) => vf.get(id), source: (id) => sf?.get(id) }));
         }
-        const out = await Promise.all(nodes.map((n, k) => this.backend.render(n, { width: ps.width, height: ps.height, format: "raw", dpr: scale, images, css: ps.css, timeMs: Math.round((idx[k]! / ps.fps) * 1000), signal: o.signal })));
-        for (let k = 0; k < out.length; k++) await onFrame(out[k]!, idx[k]!);
+        // Frame reuse: identical compiled frames (settled motion, held video) skip Takumi entirely.
+        const sigs = nodes.map((n, k) => frameSignature(n, timeCss ? Math.round((idx[k]! / ps.fps) * 1000) : 0));
+        const out: Promise<Uint8Array>[] = [];
+        nodes.forEach((n, k) => {
+          if (sigs[k] === prevSig && prevOut) return void out.push(prevOut);
+          const j = sigs.indexOf(sigs[k]!);
+          if (j < k) return void out.push(out[j]!);
+          rendered++;
+          out.push(this.backend.render(n, { width: ps.width, height: ps.height, format: "raw", dpr: scale, images, css: ps.css, timeMs: Math.round((idx[k]! / ps.fps) * 1000), signal: o.signal }));
+        });
+        const done = await Promise.all(out);
+        prevSig = sigs[sigs.length - 1]!;
+        prevOut = Promise.resolve(done[done.length - 1]!);
+        for (let k = 0; k < done.length; k++) await onFrame(done[k]!, idx[k]!);
         o.onProgress?.({ frame: Math.min(to, i + window) - from, frames: to - from });
       }
     } finally {
       readers.close();
     }
+    this.lastStats = { frames: to - from, rendered };
     return to - from;
   }
 
@@ -439,13 +477,15 @@ export class Studio {
     const w = even(ps.width * scale), h = even(ps.height * scale);
     const [from, to] = this.frameRange(ps, o);
     const partial = from !== 0 || to !== ps.frames;
+    const base = this.backend.supportsBaseVideo && this.fastPaths ? baseVideoPlan(ps, from / ps.fps) : null;
     const sink = await this.backend.encodeVideo({
       width: w, height: h, fps: ps.fps, format, quality: o.quality ?? 75, duration: (to - from) / ps.fps,
-      audio: partial ? [] : audioPlanFor(ps), signal: o.signal,
+      audio: partial ? [] : audioPlanFor(ps), base: base?.video, signal: o.signal,
     });
     const srcW = Math.round(ps.width * scale), srcH = Math.round(ps.height * scale);
+    const framePs = base ? overlayScene(ps, base.pl) : ps;
     try {
-      const frames = await this.renderFrames(ps, scale, images, o, (data) => sink.add(srcW === w && srcH === h ? data : cropRgba(data, srcW, srcH, w, h)));
+      const frames = await this.renderFrames(framePs, scale, images, o, (data) => sink.add(srcW === w && srcH === h ? data : cropRgba(data, srcW, srcH, w, h)));
       return { data: await sink.finish(), frames };
     } catch (e) {
       sink.abort();
@@ -467,7 +507,23 @@ export class Studio {
     } finally {
       readers.close();
     }
-    const data = await this.backend.renderAnimation(nodes, { width: ps.width, height: ps.height, fps: ps.fps, format: format === "webp-animated" ? "webp" : (format as "gif" | "apng"), dpr: scale, quality: o.quality, images, css: ps.css });
+    // Merge runs of identical frames into one longer frame: fewer renders, smaller files.
+    const timeCss = hasTimeCss(ps.css);
+    const ms = (i: number) => Math.round(((i + 1) * 1000) / ps.fps) - Math.round((i * 1000) / ps.fps);
+    const unique: TNode[] = [];
+    const durations: number[] = [];
+    let prev: string | null = null;
+    nodes.forEach((n, i) => {
+      const sig = frameSignature(n, timeCss ? Math.round(((from + i) / ps.fps) * 1000) : 0);
+      if (sig === prev) durations[durations.length - 1]! += ms(from + i);
+      else {
+        unique.push(n);
+        durations.push(ms(from + i));
+        prev = sig;
+      }
+    });
+    this.lastStats = { frames: nodes.length, rendered: unique.length };
+    const data = await this.backend.renderAnimation(unique, { width: ps.width, height: ps.height, fps: ps.fps, durations, format: format === "webp-animated" ? "webp" : (format as "gif" | "apng"), dpr: scale, quality: o.quality, images, css: ps.css });
     return { data, frames: nodes.length };
   }
 
@@ -517,6 +573,63 @@ function videoLocalTime(pl: PreparedLayer, t: number): number | null {
 
 function hasMotion(layers: Scene["layers"]): boolean {
   return layers.some((l) => !!(l.enter || l.exit || l.keyframes?.length || l.type === "video" || l.type === "source" || (l.type === "group" && hasMotion(l.children))));
+}
+
+/**
+ * Background-video fast path. Applies when the bottom layer is a full-frame video with nothing
+ * the encoder can't reproduce exactly: no geometry, radius, opacity, blur, filters, motion
+ * presets, or eased keyframes (linear scale keyframes = Ken Burns are fine).
+ */
+function baseVideoPlan(ps: PreparedScene, timeOffset: number): { pl: PreparedLayer; video: BaseVideo } | null {
+  const pl = ps.layers[0];
+  if (!pl || pl.layer.type !== "video") return null;
+  const l = pl.layer;
+  const geometry = l.x ?? l.y ?? l.width ?? l.height ?? l.position;
+  if (geometry !== undefined || l.radius !== undefined || l.opacity !== undefined || l.blur || l.rotate || l.background || l.padding || l.shadow || l.style || l.enter || l.exit) return null;
+  if (l.fit === "contain" || pl.start !== 0 || pl.end < ps.duration) return null;
+  let zoom: [number, number][] | undefined;
+  if (l.keyframes?.length) {
+    const kf = [...l.keyframes].sort((a, b) => a.at - b.at);
+    const onlyScale = kf.every((k) => k.x === undefined && k.y === undefined && k.rotate === undefined && k.opacity === undefined && k.blur === undefined);
+    const linear = kf.slice(1).every((k) => k.ease === "linear");
+    if (!onlyScale || !linear || kf.some((k) => k.scale === undefined || k.scale < 1)) return null;
+    zoom = kf.map((k) => [pl.start + k.at, (l.scale ?? 1) * k.scale!]);
+  } else if (l.scale !== undefined && l.scale !== 1) {
+    if (l.scale < 1) return null;
+    zoom = [[0, l.scale]];
+  }
+  return {
+    pl,
+    video: { src: l.src, trimIn: l.trim?.[0] ?? 0, trimOut: l.trim?.[1], speed: l.speed ?? 1, loop: !!l.loop, fit: l.fit === "fill" ? "fill" : "cover", zoom, timeOffset },
+  };
+}
+
+/** The scene minus its base video, with a transparent root: the overlay the encoder composites. */
+function overlayScene(ps: PreparedScene, base: PreparedLayer): PreparedScene {
+  return { ...ps, layers: ps.layers.filter((l) => l !== base), videos: ps.videos.filter((v) => v !== base), transparent: true };
+}
+
+/** CSS that changes with time (keyframes/animations/transitions) makes every frame unique. */
+function hasTimeCss(css: string[]) {
+  return css.some((c) => /@keyframes|animation|transition/.test(c));
+}
+
+const ids = new WeakMap<object, number>();
+let nextId = 0;
+/**
+ * Cheap identity of a compiled frame. Pixel buffers (video/source frames) are identified by
+ * object, not content: a held video frame is the same object, a new frame is a new object.
+ */
+function frameSignature(node: TNode, timeMs: number): string {
+  const json = JSON.stringify(node, (_k, v) => {
+    if (v && typeof v === "object" && v.data instanceof Uint8Array && typeof v.width === "number") {
+      let id = ids.get(v);
+      if (id === undefined) ids.set(v, (id = ++nextId));
+      return `#px${id}`;
+    }
+    return v;
+  });
+  return timeMs ? `${timeMs}|${json}` : json;
 }
 
 /**

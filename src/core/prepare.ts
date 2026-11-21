@@ -45,6 +45,8 @@ export interface PreparedScene {
   videos: PreparedLayer[];
   /** source layers (canvas/webgl/webgpu frame providers) */
   sources: PreparedLayer[];
+  /** render without the root background (overlay frames for a composited base video) */
+  transparent?: boolean;
   /** CSS for the renderer: compat sheet, scene css, layer css and <style> blocks */
   css: string[];
   key: string;
