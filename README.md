@@ -22,9 +22,19 @@ Turn one JSON **scene** into on-brand **PNG, JPEG, WebP, GIF, APNG, animated Web
 
 Requirements: Node 20+, and for video on a server, `ffmpeg` on your `PATH` (or set `OPTICAL_FFMPEG`).
 
+Optical lives on GitHub, not npm. Install a release by its tag:
+
 ```bash
-npm install @reallygoodwork/optical
+npm install github:reallygoodwork/optical#v0.1.0
 ```
+
+Or use the prebuilt tarball attached to each [release](https://github.com/reallygoodwork/optical/releases), which skips the build step:
+
+```bash
+npm install https://github.com/reallygoodwork/optical/releases/download/v0.1.0/optical-0.1.0.tgz
+```
+
+Either way, you import it as `@reallygoodwork/optical`.
 
 The examples below use the brand in [`examples/brand`](examples/brand). To run them, clone this repo, then `npm install && npm run build`.
 
@@ -423,7 +433,7 @@ npm run perf              # the performance table above
 
 ## Releasing
 
-Releases are automatic. Every push to `main` runs CI, then [semantic-release](https://semantic-release.gitbook.io) reads the commit messages since the last tag, picks the next [semantic version](https://semver.org), publishes to npm with [provenance](https://docs.npmjs.com/generating-provenance-statements), tags the commit and writes a GitHub release with notes.
+GitHub is the source of truth. There's no npm package. Every push to `main` runs CI, then [semantic-release](https://semantic-release.gitbook.io) reads the commit messages since the last tag, picks the next [semantic version](https://semver.org), tags the commit and writes a GitHub release with notes and a prebuilt tarball.
 
 The commit type decides the version:
 
@@ -435,9 +445,11 @@ The commit type decides the version:
 | `docs:` `test:` `ci:` `chore:` | none | `docs: add the Demons reels` |
 
 - **Pull requests:** squash-merge them. The PR title becomes the commit message, and the **PR title** check keeps it in this form.
-- **Prereleases:** push to `next` or `beta` to publish `1.2.0-next.1` style versions under those dist-tags.
+- **Prereleases:** push to `next` or `beta` to release `1.2.0-next.1` style versions, marked as prereleases on GitHub.
 - **Dependabot:** runtime dependency bumps are `deps:` (patch release); dev and Actions bumps are `chore:` and `ci:` (no release).
-- **Auth:** the workflow publishes through npm [trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC), so there's no long-lived npm token to rotate. A trusted publisher can only be attached once the package exists, so the very first publish uses an `NPM_TOKEN` repository secret; delete it after that.
+- **No secrets:** the workflow only uses the repo's built-in `GITHUB_TOKEN`.
+- **First run:** if the repo has no version tag yet, the workflow tags the first commit `v0.0.0`, so releases start at 0.1.0 instead of 1.0.0.
+- **Installing from a tag:** `npm install github:reallygoodwork/optical#vX.Y.Z` builds the package on install (the `prepare` script). The release tarball is already built.
 
 ## Limits
 
@@ -456,6 +468,7 @@ src/browser     Takumi WASM + Mediabunny/WebCodecs backend; routing BrowserStudi
 src/server      createRenderHandler (Request → Response)
 src/agent       tool definitions, MCP server, CLI
 test/           unit + render tests, browser capability tests, CSS conformance suite
+site/           landing page (static; deploy as-is, see vercel.json)
 examples/       brands (Lumen, Demons), scenes, sizzle reels, media, Next.js routes, React hook, MCP config
 docs/diagrams/  the drawings in this README (source + renders)
 ```

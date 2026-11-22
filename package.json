@@ -71,9 +71,11 @@
     "test:all": "npm run typecheck && npm test && npm run test:browser && npm run test:conformance",
     "perf": "python3 scripts/perf.py 3",
     "demons": "tsx scripts/demons.ts",
-    "prepack": "npm run build",
     "check:package": "publint --strict && npm pack --dry-run",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "prepare": "npm run build",
+    "site": "python3 -m http.server 8080 -d site",
+    "site:og": "tsx scripts/site/og.ts"
   },
   "dependencies": {
     "@takumi-rs/core": "2.22.1",
@@ -89,6 +91,7 @@
   },
   "devDependencies": {
     "@napi-rs/canvas": "^1.1.1",
+    "@semantic-release/exec": "^7.1.0",
     "@types/node": "^22.0.0",
     "@types/pngjs": "^6.0.5",
     "conventional-changelog-conventionalcommits": "^9.3.1",
@@ -105,8 +108,5 @@
   "engines": {
     "node": ">=20"
   },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  }
+  "private": true
 }

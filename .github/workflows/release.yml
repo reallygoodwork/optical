@@ -1,7 +1,7 @@
-# Every push to main (or next/beta for prereleases) runs the full CI, then semantic-release reads
-# the conventional commits since the last tag, picks the next version, publishes to npm with
-# provenance, tags the commit and writes a GitHub release. Pushes with only docs/test/chore/ci
-# commits run the tests and publish nothing.
+# GitHub is the source of truth: there is no npm publish. Every push to main (or next/beta for
+# prereleases) runs the full CI, then semantic-release reads the conventional commits since the
+# last tag, picks the next version, tags the commit and writes a GitHub release with a prebuilt
+# tarball attached. Pushes with only docs/test/chore/ci commits run the tests and release nothing.
 name: Release
 
 on:
@@ -25,15 +25,14 @@ jobs:
       pull-requests: write
 
   release:
-    name: Publish to npm
+    name: Tag and release on GitHub
     needs: ci
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write # tags and GitHub releases
+      contents: write # tags, GitHub releases and their assets
       issues: write # release notes link issues
       pull-requests: write
-      id-token: write # npm trusted publishing (OIDC) and provenance
     steps:
       - uses: actions/checkout@v7
         with:
@@ -43,22 +42,19 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      # Trusted publishing needs npm 11.5.1 or later; Node 22 ships npm 10.
-      - run: npm install -g npm@^11.5.1
       - run: npm ci
-      - name: Verify dependency signatures
-        run: npm audit signatures
-      # semantic-release starts at 1.0.0 when it finds no version tag. The repo is meant to start at
-      # 0.x from the v0.0.0 baseline tag, so refuse to publish without it.
-      - name: Require a version tag
+      # semantic-release starts at 1.0.0 when it finds no version tag. Optical starts at 0.x, so the
+      # first run tags the root commit v0.0.0 and the first real release becomes 0.1.0.
+      - name: Baseline tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git tag -l 'v*' | grep -q . || { echo "::error::No v* tag found. Push the baseline first: git push origin v0.0.0"; exit 1; }
+          if ! git tag -l 'v*' | grep -q .; then
+            root=$(git rev-list --max-parents=0 HEAD | tail -1)
+            git tag v0.0.0 "$root"
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" v0.0.0
+          fi
       - name: semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Only needed for the very first publish, before the package exists on npm and a trusted
-          # publisher can be attached to it. Delete the secret afterwards; OIDC takes over.
-          BOOTSTRAP_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -n "$BOOTSTRAP_NPM_TOKEN" ]; then export NPM_TOKEN="$BOOTSTRAP_NPM_TOKEN"; fi
-          npx semantic-release
+        run: npx semantic-release
