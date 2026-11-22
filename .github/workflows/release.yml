@@ -48,6 +48,11 @@ jobs:
       - run: npm ci
       - name: Verify dependency signatures
         run: npm audit signatures
+      # semantic-release starts at 1.0.0 when it finds no version tag. The repo is meant to start at
+      # 0.x from the v0.0.0 baseline tag, so refuse to publish without it.
+      - name: Require a version tag
+        run: |
+          git tag -l 'v*' | grep -q . || { echo "::error::No v* tag found. Push the baseline first: git push origin v0.0.0"; exit 1; }
       - name: semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

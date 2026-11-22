@@ -418,6 +418,7 @@ npm run perf              # the performance table above
 - **Keeping it cheap:** it uses the runner's preinstalled Chrome, cancels runs a newer push replaces, skips docs-only changes, and keeps artifacts for 7 days.
 - **Results:** each PR gets one comment with the CSS matrix and browser checks, updated on every push.
 - **After a Takumi upgrade:** run **Update conformance baseline** from the Actions tab to accept new results.
+- **When the runner's Chrome updates:** the baseline records which Chrome major it was captured with. Against a different major, changed cases show as a warning instead of failing the build, since the reference moved, not Optical. Run **Update conformance baseline** to re-baseline on the new Chrome.
 - **Updates:** Dependabot groups Takumi releases into one PR so the comment shows exactly what changed.
 
 ## Releasing

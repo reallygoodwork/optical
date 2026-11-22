@@ -98,6 +98,12 @@ async function main() {
 
   // Baseline comparison: a case that used to pass and no longer does is a regression.
   const baseline: Record<string, Status> = existsSync(BASELINE) ? JSON.parse(readFileSync(BASELINE, "utf8")) : {};
+  // The baseline only means something against the Chrome it was captured with. Runner images move
+  // to new Chrome releases on their own, and text rendering in particular shifts between them.
+  const refFile = BASELINE.replace(/\.json$/, ".chrome.txt");
+  const refMajor = existsSync(refFile) ? readFileSync(refFile, "utf8").trim() : "";
+  const major = chromeVersion.split(".")[0]!;
+  const sameReference = !refMajor || refMajor === major;
   const rank: Record<Status, number> = { pass: 3, partial: 2, fail: 1, error: 0, skip: -1 };
   const regressions = results.filter((r) => r.status !== "skip" && baseline[r.id] && rank[r.status] < rank[baseline[r.id]!]);
   const improvements = results.filter((r) => r.status !== "skip" && baseline[r.id] && rank[r.status] > rank[baseline[r.id]!]);
@@ -109,12 +115,21 @@ async function main() {
     const next = { ...baseline };
     for (const r of results) if (r.status !== "skip") next[r.id] = r.status;
     writeFileSync(BASELINE, JSON.stringify(Object.fromEntries(Object.entries(next).sort()), null, 2) + "\n");
+    writeFileSync(refFile, major + "\n");
     console.log(`\nbaseline written (${Object.keys(next).length} cases)`);
   }
   const count = (s: Status) => results.filter((r) => r.status === s).length;
   console.log(`\npass ${count("pass")} · partial ${count("partial")} · fail ${count("fail")} · error ${count("error")} · skip ${count("skip")}  (Chrome ${chromeVersion})`);
   if (regressions.length && !update) {
-    console.error(`\n${regressions.length} regression(s): ${regressions.map((r) => `${r.id} (${baseline[r.id]} → ${r.status})`).join(", ")}`);
+    const list = regressions.map((r) => `${r.id} (${baseline[r.id]} → ${r.status})`).join(", ");
+    if (!sameReference) {
+      // Not Optical's doing: the reference browser changed. Report it, don't block the merge.
+      const msg = `Chrome ${major} differs from the baseline's Chrome ${refMajor}; ${regressions.length} case(s) changed: ${list}. Run "Update conformance baseline" to re-baseline on this Chrome.`;
+      console.warn(`\n${msg}`);
+      if (process.env.GITHUB_ACTIONS) console.log(`::warning title=Conformance reference changed::${msg}`);
+      return;
+    }
+    console.error(`\n${regressions.length} regression(s): ${list}`);
     process.exit(1);
   }
 }

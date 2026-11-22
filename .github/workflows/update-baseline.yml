@@ -28,5 +28,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          git add test/conformance/baseline.json
+          git add test/conformance/baseline.json test/conformance/baseline.chrome.txt
           git diff --cached --quiet && echo "Baseline unchanged" || (git commit -m "chore: update CSS conformance baseline" && git push)
