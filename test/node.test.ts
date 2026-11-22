@@ -11,7 +11,7 @@ import { createAgentTools } from "../src/agent/index.js";
 let studio: NodeStudio;
 const CLIP = "examples/media/clip.mp4";
 const MUSIC = "examples/media/music.mp3";
-const tmp = mkdtempSync(join(tmpdir(), "scout-test-"));
+const tmp = mkdtempSync(join(tmpdir(), "optical-test-"));
 
 const probe = (data: Uint8Array, ext: string) => {
   const f = join(tmp, `p-${Math.random().toString(36).slice(2)}.${ext}`);
@@ -150,7 +150,7 @@ test("http handler renders, validates and lists templates", async () => {
   const res = await handler(new Request("http://x/api", { method: "POST", body: JSON.stringify({ action: "render", input: { template: "quote-card", props: { quote: "over http" } }, options: { format: "png" } }) }));
   assert.equal(res.status, 200);
   assert.equal(res.headers.get("content-type"), "image/png");
-  assert.ok(JSON.parse(res.headers.get("x-scout-meta")!).width === 1080);
+  assert.ok(JSON.parse(res.headers.get("x-optical-meta")!).width === 1080);
   const bad = await handler(new Request("http://x/api", { method: "POST", body: JSON.stringify({ action: "render", input: { layers: [{ type: "nope" }] } }) }));
   assert.equal(bad.status, 422);
   const list = await (await handler(new Request("http://x/api", { method: "POST", body: JSON.stringify({ action: "templates" }) }))).json();

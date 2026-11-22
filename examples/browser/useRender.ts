@@ -1,6 +1,6 @@
 // React hook: render on the user's device, fall back to the server.
 import { useMemo, useState } from "react";
-import { createBrowserStudio, type RenderInput, type RenderOptions } from "@reallygoodwork/scout-render/browser";
+import { createBrowserStudio, type RenderInput, type RenderOptions } from "@reallygoodwork/optical/browser";
 import brand from "./brand.json";
 
 export function useRender() {

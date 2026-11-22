@@ -47,7 +47,7 @@ export function createRenderHandler(studio: Studio, o: RenderHandlerOptions = {}
         "content-length": String(r.data.byteLength),
         "cache-control": "public, max-age=31536000, immutable",
         etag: `"${r.key}"`,
-        "x-scout-meta": JSON.stringify(meta),
+        "x-optical-meta": JSON.stringify(meta),
       },
     });
   };

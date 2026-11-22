@@ -307,7 +307,7 @@ function canvasToRgba(canvas: HTMLCanvasElement | OffscreenCanvas): RgbaImage {
  * -------------------------------------------------------------------------------------------*/
 
 export interface RemoteOptions {
-  /** Endpoint created with `createRenderHandler` from "@reallygoodwork/scout-render/server". */
+  /** Endpoint created with `createRenderHandler` from "@reallygoodwork/optical/server". */
   url: string;
   headers?: Record<string, string>;
   fetch?: typeof fetch;
@@ -389,7 +389,7 @@ export class BrowserStudio extends Studio {
       data = new Uint8Array(await (await (remote.fetch ?? fetch)(j.url)).arrayBuffer());
       meta.url = j.url;
     } else {
-      meta = JSON.parse(res.headers.get("x-scout-meta") ?? "{}");
+      meta = JSON.parse(res.headers.get("x-optical-meta") ?? "{}");
       data = new Uint8Array(await res.arrayBuffer());
     }
     const format: Format = options.format ?? "png";

@@ -26,7 +26,7 @@ export interface ToolResult {
 }
 
 export interface AgentToolsOptions {
-  /** Where rendered files go (default ./scout-out). */
+  /** Where rendered files go (default ./optical-out). */
   outDir?: string;
   /** Upload a result and return a URL (Blob, R2...). When set, results include `url`. */
   publish?: (r: RenderResult, name: string) => Promise<string>;
@@ -126,7 +126,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
  * `sceneId`, so agents never resend large JSON.
  */
 export function createAgentTools(studio: Studio, o: AgentToolsOptions = {}) {
-  const outDir = resolve(o.outDir ?? "scout-out");
+  const outDir = resolve(o.outDir ?? "optical-out");
   const scenes = new Map<string, Scene>();
   const inlineLimit = o.inlineLimit ?? 900 * 1024;
   let seq = 0;
@@ -274,7 +274,7 @@ export async function serveMcp(studio: Studio, o: AgentToolsOptions = {}) {
   const { StdioServerTransport } = await import("@modelcontextprotocol/sdk/server/stdio.js");
   const { ListToolsRequestSchema, CallToolRequestSchema } = await import("@modelcontextprotocol/sdk/types.js");
   const tools = createAgentTools(studio, o);
-  const server = new Server({ name: "scout-render", version: "0.1.0" }, { capabilities: { tools: {} }, instructions: "Brand-aware renderer. Call get_brand first, then preview → edit_scene → render." });
+  const server = new Server({ name: "optical", version: "0.1.0" }, { capabilities: { tools: {} }, instructions: "Brand-aware renderer. Call get_brand first, then preview → edit_scene → render." });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: tools.definitions.map((t) => ({ name: t.name, description: t.description, inputSchema: t.input_schema })) }));
   server.setRequestHandler(CallToolRequestSchema, async (req: any) => {
     const r = await tools.call(req.params.name, req.params.arguments ?? {});

@@ -1,7 +1,7 @@
 node_modules
 dist
 out
-scout-out
+optical-out
 *.wasm
 test/browser/bundle.js
 test/browser/page.js

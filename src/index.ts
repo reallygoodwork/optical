@@ -1,9 +1,9 @@
 /**
- * @reallygoodwork/scout-render — platform-neutral core.
+ * @reallygoodwork/optical — platform-neutral core.
  *
  * Import a runtime entry to get a working studio:
- *   import { createNodeStudio } from "@reallygoodwork/scout-render/node";      // servers, agents, CLIs
- *   import { createBrowserStudio } from "@reallygoodwork/scout-render/browser"; // user's device, with server fallback
+ *   import { createNodeStudio } from "@reallygoodwork/optical/node";      // servers, agents, CLIs
+ *   import { createBrowserStudio } from "@reallygoodwork/optical/browser"; // user's device, with server fallback
  */
 export * from "./core/schema.js";
 export { SIZES, resolveSize, type SizeInput, type SizeName } from "./core/sizes.js";

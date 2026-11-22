@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "scout-render": {
+    "optical": {
       "command": "npx",
-      "args": ["-y", "scout-render", "mcp", "--brand", "/absolute/path/to/brand.json", "--out", "/absolute/path/to/scout-out"]
+      "args": ["-y", "optical", "mcp", "--brand", "/absolute/path/to/brand.json", "--out", "/absolute/path/to/optical-out"]
     }
   }
 }

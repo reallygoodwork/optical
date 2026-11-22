@@ -5,7 +5,7 @@ import { ensureIds } from "./edit.js";
 import { fromHtml } from "@takumi-rs/helpers/html";
 
 /** Restores browser box-sizing inside HTML layers (Takumi defaults every element to border-box). */
-export const BROWSER_COMPAT_CSS = ".scout-web,.scout-web *,.scout-web *::before,.scout-web *::after{box-sizing:content-box}";
+export const BROWSER_COMPAT_CSS = ".optical-web,.optical-web *,.optical-web *::before,.optical-web *::after{box-sizing:content-box}";
 
 export interface MediaInfo {
   duration: number;

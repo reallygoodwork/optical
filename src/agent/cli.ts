@@ -6,14 +6,14 @@ import { createNodeStudio, loadBrand } from "../node/index.js";
 import { createRenderHandler } from "../server/index.js";
 import { serveMcp } from "./index.js";
 
-const HELP = `scout-render — brand-aware rendering for people and agents
+const HELP = `optical — brand-aware rendering for people and agents
 
 Usage:
-  scout-render mcp      --brand brand.json [--out ./scout-out]        MCP server on stdio
-  scout-render render   <scene.json | template> --brand brand.json [-f png|jpeg|webp|gif|mp4|webm|svg|pdf] [--size story] [--props '{...}'] [-o file]
-  scout-render preview  <scene.json | template> --brand brand.json [--props '{...}'] [-o sheet.png]
-  scout-render templates --brand brand.json
-  scout-render serve    --brand brand.json [--port 3000]              HTTP endpoint (POST {action,...})
+  optical mcp      --brand brand.json [--out ./optical-out]        MCP server on stdio
+  optical render   <scene.json | template> --brand brand.json [-f png|jpeg|webp|gif|mp4|webm|svg|pdf] [--size story] [--props '{...}'] [-o file]
+  optical preview  <scene.json | template> --brand brand.json [--props '{...}'] [-o sheet.png]
+  optical templates --brand brand.json
+  optical serve    --brand brand.json [--port 3000]              HTTP endpoint (POST {action,...})
 `;
 
 const { values, positionals } = parseArgs({
@@ -38,9 +38,9 @@ if (!cmd || values.help) {
   process.exit(0);
 }
 
-const brandPath = values.brand ?? process.env.SCOUT_BRAND;
+const brandPath = values.brand ?? process.env.OPTICAL_BRAND;
 if (!brandPath) {
-  console.error("Missing --brand (or SCOUT_BRAND)");
+  console.error("Missing --brand (or OPTICAL_BRAND)");
   process.exit(1);
 }
 const studio = createNodeStudio({ brand: await loadBrand(brandPath) });
@@ -87,7 +87,7 @@ switch (cmd) {
       const response = await handler(request);
       res.writeHead(response.status, Object.fromEntries(response.headers));
       res.end(Buffer.from(await response.arrayBuffer()));
-    }).listen(port, () => console.log(`scout-render listening on http://localhost:${port}`));
+    }).listen(port, () => console.log(`optical listening on http://localhost:${port}`));
     break;
   }
   default:

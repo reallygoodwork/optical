@@ -1,4 +1,4 @@
-# Using @reallygoodwork/scout-render as an agent
+# Using Optical as an agent
 
 You produce on-brand assets by writing JSON scenes and rendering them. The tools are designed to be cheap to call often.
 

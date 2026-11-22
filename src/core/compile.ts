@@ -189,7 +189,7 @@ function contentNode(pl: PreparedLayer, ps: PreparedScene, t: number, media: Fra
         },
       };
     case "node": {
-      if (pl.htmlNode) return { type: "container", className: "scout-web", style: { width: "100%", height: "100%", display: "block" }, children: [pl.htmlNode as TNode] } as TNode;
+      if (pl.htmlNode) return { type: "container", className: "optical-web", style: { width: "100%", height: "100%", display: "block" }, children: [pl.htmlNode as TNode] } as TNode;
       return (l.node as TNode) ?? null;
     }
     case "group": {

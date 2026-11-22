@@ -1,5 +1,5 @@
 {
-  "name": "@reallygoodwork/scout-render",
+  "name": "@reallygoodwork/optical",
   "version": "0.0.0-development",
   "description": "Brand-aware rendering for agents: PNG, JPEG, WebP, GIF, MP4, WebM, SVG and PDF from one JSON scene. Renders on the user's device when it can, on the server when it should.",
   "keywords": [
@@ -17,13 +17,13 @@
     "webcodecs",
     "wasm"
   ],
-  "homepage": "https://github.com/reallygoodwork/scout-render#readme",
+  "homepage": "https://github.com/reallygoodwork/optical#readme",
   "bugs": {
-    "url": "https://github.com/reallygoodwork/scout-render/issues"
+    "url": "https://github.com/reallygoodwork/optical/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reallygoodwork/scout-render.git"
+    "url": "git+https://github.com/reallygoodwork/optical.git"
   },
   "author": "Really Good Work Inc.",
   "type": "module",
@@ -52,7 +52,7 @@
     }
   },
   "bin": {
-    "scout-render": "./dist/agent/cli.js"
+    "optical": "./dist/agent/cli.js"
   },
   "files": [
     "dist",

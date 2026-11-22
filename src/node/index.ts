@@ -10,7 +10,7 @@ import { Studio, type RenderInput, type StudioOptions } from "../core/studio.js"
 import { audioPlanFor } from "../core/audio.js";
 
 export interface NodeBackendOptions {
-  /** ffmpeg binary. Default: $SCOUT_FFMPEG, $FFMPEG_PATH, then "ffmpeg" on PATH. */
+  /** ffmpeg binary. Default: $OPTICAL_FFMPEG, $FFMPEG_PATH, then "ffmpeg" on PATH. */
   ffmpeg?: string;
   ffprobe?: string;
   /** Frames rendered in parallel. Default: 2 × cores, max 16. */
@@ -38,8 +38,8 @@ export class NodeBackend implements Backend {
 
   constructor(private readonly o: NodeBackendOptions = {}) {
     this.concurrency = o.concurrency ?? Math.min(16, availableParallelism() * 2);
-    this.ffmpeg = o.ffmpeg ?? process.env.SCOUT_FFMPEG ?? process.env.FFMPEG_PATH ?? "ffmpeg";
-    this.ffprobe = o.ffprobe ?? process.env.SCOUT_FFPROBE ?? process.env.FFPROBE_PATH ?? this.ffmpeg.replace(/ffmpeg(\.exe)?$/, "ffprobe$1");
+    this.ffmpeg = o.ffmpeg ?? process.env.OPTICAL_FFMPEG ?? process.env.FFMPEG_PATH ?? "ffmpeg";
+    this.ffprobe = o.ffprobe ?? process.env.OPTICAL_FFPROBE ?? process.env.FFPROBE_PATH ?? this.ffmpeg.replace(/ffmpeg(\.exe)?$/, "ffprobe$1");
   }
 
   async registerFonts(faces: FontFaceInput[]) {
@@ -192,7 +192,7 @@ export class NodeBackend implements Backend {
   }
 
   async encodeVideo(o: VideoEncodeOptions): Promise<VideoSink> {
-    const dir = await mkdtemp(join(tmpdir(), "scout-"));
+    const dir = await mkdtemp(join(tmpdir(), "optical-"));
     const out = join(dir, `out.${o.format}`);
     const args = ["-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgba", "-s", `${o.width}x${o.height}`, "-r", String(o.fps), "-i", "pipe:0"];
     const filters: string[] = [];
@@ -268,7 +268,7 @@ export class NodeBackend implements Backend {
 
   /** Join video-only chunks (from `frames: [from, to]` renders) and lay the scene's audio under them. */
   async join(chunks: Uint8Array[], o: { format: "mp4" | "webm"; duration: number; audio: AudioClip[] }): Promise<Uint8Array> {
-    const dir = await mkdtemp(join(tmpdir(), "scout-join-"));
+    const dir = await mkdtemp(join(tmpdir(), "optical-join-"));
     try {
       const list: string[] = [];
       for (let i = 0; i < chunks.length; i++) {
@@ -417,7 +417,7 @@ function run(cmd: string, args: string[]): Promise<Buffer> {
     let err = "";
     p.stdout.on("data", (d) => out.push(d));
     p.stderr.on("data", (d) => (err += d));
-    p.on("error", (e) => reject(new Error(`${cmd} not available (${e.message}). Install ffmpeg or set SCOUT_FFMPEG.`)));
+    p.on("error", (e) => reject(new Error(`${cmd} not available (${e.message}). Install ffmpeg or set OPTICAL_FFMPEG.`)));
     p.on("close", (code) => (code === 0 ? resolve(Buffer.concat(out)) : reject(new Error(`${cmd} exited ${code}: ${err.slice(-600)}`))));
   });
 }

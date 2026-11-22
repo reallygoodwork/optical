@@ -1,4 +1,6 @@
-# @reallygoodwork/scout-render
+# Optical
+
+`@reallygoodwork/optical`. Named for the optical printer operator, the film-lab craftsperson who layered footage, mattes and titles into one finished negative, frame by frame, the same way every time.
 
 Turn one JSON **scene** into on-brand **PNG, JPEG, WebP, GIF, APNG, animated WebP, MP4, WebM, SVG or PDF**. Your brand's tokens, fonts and motion are applied automatically. It renders on the user's device when it can and on your server when it should, and agents can drive it through plain JSON or MCP.
 
@@ -18,10 +20,10 @@ Turn one JSON **scene** into on-brand **PNG, JPEG, WebP, GIF, APNG, animated Web
 
 ## Quick start
 
-Requirements: Node 20+, and for video on a server, `ffmpeg` on your `PATH` (or set `SCOUT_FFMPEG`).
+Requirements: Node 20+, and for video on a server, `ffmpeg` on your `PATH` (or set `OPTICAL_FFMPEG`).
 
 ```bash
-npm install @reallygoodwork/scout-render
+npm install @reallygoodwork/optical
 ```
 
 The examples below use the brand in [`examples/brand`](examples/brand). To run them, clone this repo, then `npm install && npm run build`.
@@ -30,7 +32,7 @@ Render a template with the example brand:
 
 ```ts
 import { writeFile } from "node:fs/promises";
-import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/optical/node";
 
 const studio = createNodeStudio({ brand: await loadBrand("examples/brand/brand.json") });
 
@@ -147,7 +149,7 @@ studio.render({ template: "announcement", props: { headline: "Launch day", media
 Change a scene with small operations that target layers by `id`. They return a new scene and never modify the old one, so an edit history is just an array.
 
 ```ts
-import { edit } from "@reallygoodwork/scout-render";
+import { edit } from "@reallygoodwork/optical";
 
 const next = edit(scene, [
   { op: "set", target: "headline", path: "text", value: "Fall drop: 20% off" },
@@ -193,24 +195,24 @@ Other calls on the studio:
 
 ## Where it runs
 
-### On a server or in an agent: `@reallygoodwork/scout-render/node`
+### On a server or in an agent: `@reallygoodwork/optical/node`
 
 Uses native Takumi plus ffmpeg. This is the right choice for agents, scheduled jobs, APIs and anything without a browser.
 
 ```ts
-import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/optical/node";
 const studio = createNodeStudio({
   brand: await loadBrand("brand.json"),
   store: myCache,               // optional { get, set }: Blob, R2, KV, disk. Identical requests never render twice.
 });
 ```
 
-### On the user's device: `@reallygoodwork/scout-render/browser`
+### On the user's device: `@reallygoodwork/optical/browser`
 
 Uses Takumi compiled to WebAssembly, and WebCodecs (through [Mediabunny](https://mediabunny.dev)) to decode source media and encode MP4/WebM. Rendering on the device costs you nothing. When a job is too big for the device, it goes to your server.
 
 ```ts
-import { createBrowserStudio } from "@reallygoodwork/scout-render/browser";
+import { createBrowserStudio } from "@reallygoodwork/optical/browser";
 
 const studio = createBrowserStudio({
   brand,
@@ -239,14 +241,14 @@ Routing rules, in order:
 
 The whole studio also runs inside a Web Worker, which keeps the page responsive. Your bundler resolves the wasm through `@takumi-rs/wasm/auto`; if it can't, pass URLs: `backend: { wasm: "/takumi_wasm_bg.wasm", pdfWasm: "/takumi_pdf_wasm_bg.wasm" }` (both files ship in `node_modules`).
 
-### As an HTTP endpoint: `@reallygoodwork/scout-render/server`
+### As an HTTP endpoint: `@reallygoodwork/optical/server`
 
 One Request/Response handler covers everything a client or agent needs. It works in a Next.js route, a Vercel Function, Hono or Bun.
 
 ```ts
 // app/api/render/route.ts
-import { createNodeStudio, loadBrand } from "@reallygoodwork/scout-render/node";
-import { createRenderHandler } from "@reallygoodwork/scout-render/server";
+import { createNodeStudio, loadBrand } from "@reallygoodwork/optical/node";
+import { createRenderHandler } from "@reallygoodwork/optical/server";
 import { put } from "@vercel/blob";
 
 const studio = createNodeStudio({ brand: await loadBrand(process.cwd() + "/brand/brand.json") });
@@ -274,7 +276,7 @@ const mp4 = await studio.join(input, chunks);
 ## For agents
 
 ```bash
-node dist/agent/cli.js mcp --brand ./brand.json --out ./scout-out
+node dist/agent/cli.js mcp --brand ./brand.json --out ./optical-out
 ```
 
 This starts an MCP server with these tools:
@@ -295,7 +297,7 @@ Scenes are stored on the server and addressed by `sceneId`, so an agent iterates
 Without MCP, the same tools work with any SDK:
 
 ```ts
-import { createAgentTools } from "@reallygoodwork/scout-render/agent";
+import { createAgentTools } from "@reallygoodwork/optical/agent";
 const tools = createAgentTools(studio, { outDir: "./out" });
 tools.anthropic();   // tool definitions for the Anthropic Messages API
 tools.openai();      // function-calling definitions

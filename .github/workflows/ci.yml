@@ -94,7 +94,7 @@ jobs:
           script: |
             const fs = require("fs");
             const read = (p) => (fs.existsSync(p) ? fs.readFileSync(p, "utf8") : "");
-            const marker = "<!-- scout-render-report -->";
+            const marker = "<!-- optical-report -->";
             const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body = [marker, read("out/conformance/report.md"), read("out/browser/report.md"), `\n[Images and full logs](${run})`].join("\n\n").slice(0, 65000);
             const { data: comments } = await github.rest.issues.listComments({ ...context.repo, issue_number: context.issue.number, per_page: 100 });
