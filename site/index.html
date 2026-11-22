@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Optical by Really Good Work Inc.: one scene in, every brand asset out</title>
+<meta name="description" content="Write an asset once as JSON. Optical renders it as a PNG, GIF, MP4 or PDF, in your brand, fast enough for an agent to try ten versions. Free and open source, from Really Good Work Inc.">
+<link rel="canonical" href="https://optical.reallygood.work/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://optical.reallygood.work/">
+<meta property="og:title" content="Optical: one scene in, every brand asset out">
+<meta property="og:description" content="Write an asset once as JSON. Get the PNG, GIF, MP4 and PDF, in your brand.">
+<meta property="og:image" content="https://optical.reallygood.work/media/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@reallygoodwork">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 fill=%22%23000%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%229%22 fill=%22none%22 stroke=%22%23E5484D%22 stroke-width=%223%22/%3E%3C/svg%3E">
+<link rel="preload" href="media/PaperMono.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Paper Mono';src:url('media/PaperMono.woff2') format('woff2');font-weight:100 800;font-style:normal;font-display:swap}
+body{margin:0;background:#000}
+.pg{
+  /* two text tones on pure black: fg 17.1:1, dim Lc 61 */
+  --color-bg-page:#000000; --color-bg-surface:#0D0D0D; --color-border:#595855;
+  --color-text-primary:#E8E8E6; --color-text-dim:#B3B3B0; --color-bg-plate:#1A1A1A; --color-text-plate-dim:#C4C4C1;
+  --color-text-secondary:var(--color-text-primary); --color-text-tertiary:var(--color-text-plate-dim); --color-ink:#E5484D;
+  --text-body:0.8125rem; --text-small:0.75rem; --text-statement:1.25rem;
+  background:var(--color-bg-page);color:var(--color-text-primary);
+  font-family:'Paper Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:var(--text-body);line-height:1.5;font-weight:400;text-transform:uppercase;letter-spacing:0.02em;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.pg a{color:inherit;text-decoration:none}
+.pg a:hover{color:var(--color-text-dim)}
+.pg a:focus-visible{outline:1px solid var(--color-text-primary);outline-offset:3px}
+.br::before{content:"[\00a0"} .br::after{content:"\00a0]"}
+.skip{position:absolute;left:-999px}
+.skip:focus{left:1rem;top:1rem;background:var(--color-text-primary);color:var(--color-bg-page)!important;padding:0.25rem 0.5rem;z-index:1}
+.wrap{max-width:64rem;margin:0 auto;padding:0 2rem}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;padding:1.5rem 0}
+.nav{display:flex;gap:1.5rem;flex-wrap:wrap}
+.sec{display:grid;grid-template-columns:12rem 1fr;column-gap:2rem;padding:4.5rem 0 0}
+.lab{min-width:0}
+.body{min-width:0;max-width:42rem}
+.statement{margin:0;font-size:var(--text-statement);line-height:1.3;font-weight:400;letter-spacing:0.01em;text-wrap:balance;max-width:28ch}
+h2{margin:0;font-size:var(--text-body);line-height:1.5;font-weight:600;letter-spacing:0.04em}
+p{margin:1.25rem 0 0;max-width:56ch;text-wrap:pretty}
+h2 + p{margin-top:0.75rem}
+.rows{margin-top:2rem;display:grid;row-gap:1.75rem}
+.row{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr);column-gap:1.5rem}
+.row .k{min-width:0}
+.row .v{min-width:0;display:flex;flex-direction:column;text-wrap:pretty;overflow-wrap:anywhere}
+.row .v .d{color:var(--color-text-dim)}
+ol.steps{list-style:none;margin:2rem 0 0;padding:0;display:grid;row-gap:1.25rem;max-width:56ch}
+ol.steps li{display:grid;grid-template-columns:2.5rem 1fr}
+.plate{margin:2.5rem 0 0;background:var(--color-bg-plate);padding:0 0.5rem 0.5rem}
+.pl-h{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:2.25rem;font-size:var(--text-small)}
+.pl-h .chip{background:var(--color-text-primary);color:var(--color-bg-page);padding:0.1875rem 0.5rem;font-weight:500;white-space:nowrap}
+.pl-h .t{text-align:end;min-width:0}
+.plate .media,.plate .scroll svg{background:var(--color-bg-page)}
+.plate .cap{margin:0;padding:0.625rem 0.25rem 0.125rem;color:var(--color-text-plate-dim)}
+.plate pre.code{margin:0;padding:1rem 1.125rem;background:var(--color-bg-page)}
+.plate .sub{display:block;padding:0.5rem 0.25rem 0;font-size:var(--text-small);color:var(--color-text-plate-dim)}
+.media{display:block;width:100%;height:auto;background:var(--color-bg-surface)}
+figure{margin:2.5rem 0 0}
+.cap{margin-top:0.625rem;font-size:var(--text-small);color:var(--color-text-dim)}
+.reels{display:grid;grid-template-columns:minmax(0,9fr) minmax(0,16fr);gap:0.5rem;align-items:start}
+.reels .wide{grid-column:1 / -1}
+.scroll{overflow-x:auto;overscroll-behavior-x:contain}
+.scroll svg{display:block;width:100%;height:auto}
+pre.code{margin:2rem 0 0;padding:1.25rem 0;font:inherit;font-size:var(--text-small);line-height:1.8;text-transform:none;letter-spacing:0;white-space:pre;overflow-x:auto;color:var(--color-text-primary)}
+pre.code i{font-style:normal;color:var(--color-text-dim)}
+code{font:inherit;text-transform:none;letter-spacing:0}
+.mark{display:block;margin:7rem 0 0;font-size:clamp(2.5rem,9vw,6.5rem);line-height:0.9;font-weight:700;letter-spacing:-0.04em;text-wrap:balance}
+footer{display:grid;grid-template-columns:12rem 1fr;column-gap:2rem;padding:2rem 0 2.5rem;color:var(--color-text-dim)}
+footer .body{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+@media (max-width:760px){
+  .wrap{padding:0 1.25rem}
+  .sec,footer{grid-template-columns:1fr;padding-top:3.5rem}
+  .lab{margin-bottom:1.25rem}
+  .row{grid-template-columns:minmax(0,9rem) minmax(0,1fr);column-gap:1rem}
+  .nav .n{display:none}
+  .reels{grid-template-columns:1fr}
+  .reels .tall{max-width:20rem}
+  .scroll svg{min-width:40rem}
+  footer{padding-top:2rem}
+}
+</style>
+</head>
+<body>
+<div class="pg" id="top">
+<a class="skip" href="#intro">Skip to content</a>
+<div class="wrap">
+<header>
+<a href="#top">Optical</a>
+<nav class="nav" aria-label="Main"><a class="n br" href="#how">How</a><a class="n br" href="#reels">Reels</a><a class="n br" href="#speed">Speed</a><a class="n br" href="#agents">Agents</a><a class="n br" href="#about">Studio</a><a class="br" href="https://github.com/reallygoodwork/optical">Code</a></nav>
+</header>
+<main>
+<section class="sec" id="intro">
+<div class="lab">Optical<br>A Really Good Work Inc. project</div>
+<div class="body">
+<h1 class="statement">One scene in. Every asset your brand needs out.</h1>
+<p>Write an asset once, as JSON. Optical renders it as a PNG, GIF, MP4 or PDF, in your brand, fast enough for an agent to try ten versions.</p>
+</div>
+</section>
+
+<section class="sec" id="problem">
+<div class="lab">01 The problem</div>
+<div class="body">
+<h2>Brand work still gets made one size at a time.</h2>
+<p>A launch needs a story, a square, a banner, a share card, a GIF and a PDF. Someone builds the same thing six times. Then the copy changes and they do it again.</p>
+<p>Agents can write the copy now. They can’t make it look like you. That part still lands on a designer’s desk, one file at a time.</p>
+</div>
+</section>
+
+<section class="sec" id="how">
+<div class="lab">02 How it works</div>
+<div class="body">
+<h2>Write the scene. Get the files.</h2>
+<ol class="steps"><li><span>01</span><span>Describe the asset as layers: text, images, video, shapes, even real HTML. Each layer gets timing and motion.</span></li><li><span>02</span><span>Point it at your brand. Colours, fonts and type styles come from tokens, not hex codes.</span></li><li><span>03</span><span>Optical draws every frame in Rust. No headless browser.</span></li><li><span>04</span><span>Out come the formats and sizes you asked for, all in one call.</span></li></ol>
+<figure class="plate"><div class="pl-h"><span class="chip">Code 01</span><span class="t">A scene · JSON</span></div><pre class="code">{
+  "size": "instagram-story",
+  "duration": 6,
+  "layers": [
+    { "type": "video", "src": "launch.mp4", "trim": [2, 8] },
+    { "id": "headline", "type": "text", "text": "Summon the crew.",
+      "textStyle": "display", "position": "bottom-left", "width": "80%",
+      "enter": "rise" },
+    { "id": "logo", "type": "image", "src": "$assets.logo",
+      "position": "top-left", "width": "30%",
+      "enter": { "preset": "fade", "delay": 0.4 } }
+  ]
+}</pre><figcaption class="cap">Positions and widths, not pixels. The same scene reflows to a square or a banner.</figcaption></figure>
+<p>Render it as <code>["mp4", "gif", "png"]</code> in <code>["instagram-story", "square", "og"]</code> and you get nine files back.</p>
+</div>
+</section>
+
+<section class="sec" id="reels">
+<div class="lab">03 The reels</div>
+<div class="body">
+<h2>Three sizzle reels. No footage.</h2>
+<p>Made for Demons, a test brand with a crew of mascots. Each reel is one JSON file cut to a 120&nbsp;BPM beat: kinetic type, colour wipes, bobbing characters, ticking counters.</p>
+<figure class="plate"><div class="pl-h"><span class="chip">Fig. 01</span><span class="t">Demons · three sizes</span></div><div class="reels">
+<div class="tall"><video class="media" src="media/demons-summon-reel.mp4" poster="media/demons-summon-reel.jpg" muted loop playsinline preload="none" aria-label="Reel, 12 seconds: the words Your brand’s background crew slam in one per beat, then four mascots get a shot each on coloured grounds, ending on the Demons logo."></video><span class="sub">A · Reel 1080×1920 · 12 s</span></div>
+<div><video class="media" src="media/demons-keeper-square.mp4" poster="media/demons-keeper-square.jpg" muted loop playsinline preload="none" aria-label="Square, 10 seconds: a mascot named Keeper sits beside a scanner while four ad cards ride through. Two get their button colour fixed and stamped."></video><span class="sub">B · Square 1080×1080 · 10 s</span></div>
+<div class="wide"><video class="media" src="media/demons-tally-landscape.mp4" poster="media/demons-tally-landscape.jpg" muted loop playsinline preload="none" aria-label="Landscape, 9 seconds: counters roll up to 12,480, 96% and 4,200, then a bar chart grows next to a mascot named Tally."></video><span class="sub">C · Landscape 1920×1080 · 9 s</span></div>
+</div><figcaption class="cap">Rendered on a 2-core server in about 11 seconds each. 1.3 to 1.9&nbsp;MB.</figcaption></figure>
+<div class="rows"><div class="row"><div class="k">Beat cuts</div><div class="v"><span>Shots, wipes and word slams land on every half second.</span></div></div><div class="row"><div class="k">Real CSS</div><div class="v"><span>The conveyor and the counters are HTML with <code>@keyframes</code>, driven by the scene’s clock.</span></div></div><div class="row"><div class="k">Brand rules</div><div class="v"><span>No mascot on its own colour. Three at most. Caps only on stickers. The validator checks contrast on every shot.</span></div></div></div>
+</div>
+</section>
+
+<section class="sec" id="formats">
+<div class="lab">04 Formats</div>
+<div class="body">
+<h2>One scene, every format.</h2>
+<p>Stills, loops, video and print come from the same file. Change a word once and every version follows.</p>
+<div class="rows"><div class="row"><div class="k">Stills</div><div class="v"><span>PNG, JPEG, WebP, SVG</span></div></div><div class="row"><div class="k">Loops</div><div class="v"><span>GIF, APNG, animated WebP</span></div></div><div class="row"><div class="k">Video</div><div class="v"><span>MP4 and WebM, with music and fades</span></div></div><div class="row"><div class="k">Print</div><div class="v"><span>PDF, one page per size. Typst for long documents.</span></div></div><div class="row"><div class="k">Sizes</div><div class="v"><span>24 presets, from story and square to leaderboard ads and letter pages.</span></div></div><div class="row"><div class="k">Media in</div><div class="v"><span>Video with trim, speed and loop. Images. Music.</span><span>Canvas, WebGL and WebGPU drawing for anything else.</span></div></div></div>
+</div>
+</section>
+
+<section class="sec" id="speed">
+<div class="lab">05 Speed</div>
+<div class="body">
+<h2>Fast enough to try ten versions.</h2>
+<p>An agent learns by looking, so looking has to be cheap. Measured on a small 2-core server:</p>
+<div class="rows"><div class="row"><div class="k">Share card</div><div class="v"><span>12 ms</span></div></div><div class="row"><div class="k">Square JPEG</div><div class="v"><span>33 ms</span></div></div><div class="row"><div class="k">2-second GIF</div><div class="v"><span>144 ms</span></div></div><div class="row"><div class="k">5-second square MP4</div><div class="v"><span>0.84 s</span></div></div><div class="row"><div class="k">6-second story MP4</div><div class="v"><span>1.6 s</span></div></div><div class="row"><div class="k">Same request again</div><div class="v"><span>Under 1 ms, from cache</span></div></div></div>
+<h2 style="margin-top:3.5rem">Why it’s cheap to run.</h2>
+<p>Most of a brand video doesn’t move. A logo sits still for two seconds. A headline holds. So Optical only draws what changed.</p>
+<figure class="plate"><div class="pl-h"><span class="chip">Fig. 02</span><span class="t">Frame reuse</span></div><div class="scroll"><svg viewBox="0 0 640 210" role="img" aria-label="Twelve frames in a row. Frames 1, 2, 3, 9 and 10 are drawn. Frames 4 to 8 repeat frame 3, and 11 and 12 repeat frame 10, so they are reused instead of drawn." style="background:var(--color-bg-page)">
+<g font-family="Paper Mono, ui-monospace, monospace" font-size="12">
+<text x="24" y="38" fill="var(--color-text-tertiary)">12 frames · 5 drawn · 7 reused</text>
+<g fill="none" stroke-width="1.5">
+<rect x="24" y="64" width="40" height="56" stroke="var(--color-text-primary)"/><rect x="74" y="64" width="40" height="56" stroke="var(--color-text-primary)"/><rect x="124" y="64" width="40" height="56" stroke="var(--color-text-primary)"/>
+<rect x="174" y="64" width="40" height="56" stroke="var(--color-border)" stroke-dasharray="3 3"/><rect x="224" y="64" width="40" height="56" stroke="var(--color-border)" stroke-dasharray="3 3"/><rect x="274" y="64" width="40" height="56" stroke="var(--color-border)" stroke-dasharray="3 3"/><rect x="324" y="64" width="40" height="56" stroke="var(--color-border)" stroke-dasharray="3 3"/><rect x="374" y="64" width="40" height="56" stroke="var(--color-border)" stroke-dasharray="3 3"/>
+<rect x="424" y="64" width="40" height="56" stroke="var(--color-text-primary)"/><rect x="474" y="64" width="40" height="56" stroke="var(--color-text-primary)"/>
+<rect x="524" y="64" width="40" height="56" stroke="var(--color-border)" stroke-dasharray="3 3"/><rect x="574" y="64" width="40" height="56" stroke="var(--color-border)" stroke-dasharray="3 3"/>
+</g>
+<g fill="var(--color-text-tertiary)" text-anchor="middle"><text x="44" y="138">1</text><text x="94" y="138">2</text><text x="144" y="138">3</text><text x="194" y="138">4</text><text x="244" y="138">5</text><text x="294" y="138">6</text><text x="344" y="138">7</text><text x="394" y="138">8</text><text x="444" y="138">9</text><text x="494" y="138">10</text><text x="544" y="138">11</text><text x="594" y="138">12</text></g>
+<path d="M144 150 C 144 172, 194 172, 194 160 M144 150 C 144 182, 394 182, 394 160" fill="none" stroke="var(--color-ink)" stroke-width="2" stroke-linecap="round"/>
+<path d="M494 150 C 494 172, 594 172, 594 160 M494 150 C 494 166, 544 166, 544 160" fill="none" stroke="var(--color-ink)" stroke-width="2" stroke-linecap="round"/>
+<text x="24" y="200" fill="var(--color-text-primary)">Solid: drawn</text><text x="170" y="200" fill="var(--color-text-tertiary)">Dashed: same pixels as the last drawn frame</text>
+</g>
+</svg></div><figcaption class="cap">A typical brand clip draws a quarter of its frames. The rest are copies.</figcaption></figure>
+<div class="rows"><div class="row"><div class="k">Frame reuse</div><div class="v"><span>Each frame gets a fingerprint before it’s drawn. Same fingerprint, same pixels, no work.</span></div></div><div class="row"><div class="k">Video in the encoder</div><div class="v"><span>Background footage is scaled and zoomed by ffmpeg, under a see-through overlay. That alone cut one render’s CPU by 88%.</span></div></div><div class="row"><div class="k">Drafts</div><div class="v"><span>Preview at half size as a contact sheet. Render the finals once.</span></div></div><div class="row"><div class="k">The last tune-up</div><div class="v"><span>28% faster, 32% less server CPU, files 2% smaller.</span></div></div></div>
+</div>
+</section>
+
+<section class="sec" id="where">
+<div class="lab">06 Device or server</div>
+<div class="body">
+<h2>Their device when it can. Your server when it should.</h2>
+<p>The same scene renders in the browser with WebAssembly and WebCodecs, or on Node with ffmpeg. Same pixels either way, so you pick by cost, not by look.</p>
+<figure class="plate"><div class="pl-h"><span class="chip">Fig. 03</span><span class="t">Where a render runs</span></div><div class="scroll"><svg viewBox="0 0 640 220" role="img" aria-label="A scene goes to a check: can this device handle it? If yes, it renders on the device with WebAssembly and WebCodecs. If no, or if the device fails, it renders on the server with Node and ffmpeg. Both produce the same file." style="background:var(--color-bg-page)">
+<g font-family="Paper Mono, ui-monospace, monospace" font-size="12">
+<rect x="20" y="88" width="96" height="44" fill="none" stroke="var(--color-text-primary)"/><text x="68" y="114" fill="var(--color-text-primary)" text-anchor="middle">Scene</text>
+<rect x="166" y="80" width="150" height="60" fill="none" stroke="var(--color-border)" stroke-dasharray="3 3"/><text x="241" y="106" fill="var(--color-text-primary)" text-anchor="middle">Fits this</text><text x="241" y="122" fill="var(--color-text-primary)" text-anchor="middle">device?</text>
+<rect x="376" y="24" width="150" height="52" fill="none" stroke="var(--color-text-primary)"/><text x="451" y="46" fill="var(--color-text-primary)" text-anchor="middle">Device</text><text x="451" y="64" fill="var(--color-text-tertiary)" text-anchor="middle">WASM · WebCodecs</text>
+<rect x="376" y="144" width="150" height="52" fill="none" stroke="var(--color-text-primary)"/><text x="451" y="166" fill="var(--color-text-primary)" text-anchor="middle">Server</text><text x="451" y="184" fill="var(--color-text-tertiary)" text-anchor="middle">Node · ffmpeg</text>
+<rect x="566" y="88" width="56" height="44" fill="none" stroke="var(--color-text-primary)"/><text x="594" y="114" fill="var(--color-text-primary)" text-anchor="middle">File</text>
+<g fill="none" stroke="var(--color-text-secondary)" stroke-width="1.25"><path d="M116 110 H 166"/><path d="M316 100 C 346 100, 346 50, 376 50"/><path d="M316 120 C 346 120, 346 170, 376 170"/><path d="M526 50 C 548 50, 548 100, 566 104"/><path d="M526 170 C 548 170, 548 120, 566 116"/></g>
+<text x="330" y="66" fill="var(--color-text-tertiary)">yes</text><text x="330" y="166" fill="var(--color-text-tertiary)">no</text>
+<path d="M451 76 C 432 104, 432 116, 451 144" fill="none" stroke="var(--color-ink)" stroke-width="2" stroke-linecap="round"/><path d="M443 138 L 451 144 L 457 136" fill="none" stroke="var(--color-ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="426" y="114" fill="var(--color-ink)" text-anchor="end">failed</text>
+</g>
+</svg></div><figcaption class="cap">Small jobs stay on the visitor’s machine. Big ones come to you.</figcaption></figure>
+<div class="rows"><div class="row"><div class="k">Device</div><div class="v"><span>Stills, GIFs and short clips the browser can encode, under a size budget. Costs you nothing.</span></div></div><div class="row"><div class="k">Server</div><div class="v"><span>Long video, missing codecs, agents and scripts. Runs on Vercel or any Node box.</span></div></div><div class="row"><div class="k">Fallback</div><div class="v"><span>If the device can’t finish, the server picks it up. The person waiting never knows.</span></div></div><div class="row"><div class="k">Long video</div><div class="v"><span>Split into chunks, render them in parallel, join them in one pass.</span></div></div></div>
+</div>
+</section>
+
+<section class="sec" id="agents">
+<div class="lab">07 For agents</div>
+<div class="body">
+<h2>Built for agents to drive.</h2>
+<p>Models are good at JSON and bad at pixels. So the agent writes the scene, Optical does the drawing, and every call hands back a picture the model can check.</p>
+<div class="rows"><div class="row"><div class="k">get_brand</div><div class="v"><span>Tokens, type styles, assets and sizes. Start here.</span></div></div><div class="row"><div class="k">preview</div><div class="v"><span>The whole timeline as one contact sheet. One image to look at, not a video.</span></div></div><div class="row"><div class="k">edit_scene</div><div class="v"><span>Small changes by layer id. No rewriting the scene to move a logo.</span></div></div><div class="row"><div class="k">render</div><div class="v"><span>Every format and size in one call.</span></div></div><div class="row"><div class="k">validate</div><div class="v"><span>Names the mistake and where it is: a token that doesn’t exist, timing that can’t happen, text you can’t read.</span></div></div></div>
+<figure class="plate"><div class="pl-h"><span class="chip">Code 02</span><span class="t">An edit · JSON</span></div><pre class="code">[
+  { "op": "set", "target": "headline", "path": "text", "value": "Meet the crew." },
+  { "op": "merge", "target": "logo", "value": { "enter": "pop" } },
+  { "op": "retime", "target": "logo", "start": 1.2 }
+]</pre></figure>
+<p>Plug it into Claude, Cursor or anything that speaks MCP with <code>optical mcp --brand brand.json</code>. Or call the same tools from your own code.</p>
+</div>
+</section>
+
+<section class="sec" id="tested">
+<div class="lab">08 Tested</div>
+<div class="body">
+<h2>Checked against Chrome on every pull request.</h2>
+<p>91 CSS cases render in Optical and in Chrome, then get compared pixel by pixel. The results post to the pull request.</p>
+<div class="rows"><div class="row"><div class="k">CSS</div><div class="v"><span>85 of 91 match.</span><span class="d">Not yet: 3D perspective, writing-mode, container queries, !important, full-turn rotations, list markers.</span></div></div><div class="row"><div class="k">Browser APIs</div><div class="v"><span>20 of 20.</span><span class="d">WebAssembly, WebCodecs (H.264, VP9, AV1), OffscreenCanvas, WebGL, WebGL2, WebGPU, audio mixing, workers.</span></div></div><div class="row"><div class="k">Cost</div><div class="v"><span>Free. GitHub’s standard runners and first-party actions only.</span></div></div></div>
+</div>
+</section>
+
+<section class="sec" id="try">
+<div class="lab">09 Try it</div>
+<div class="body">
+<h2>Render the reels yourself.</h2>
+<figure class="plate"><div class="pl-h"><span class="chip">Code 03</span><span class="t">Terminal</span></div><pre class="code">git clone https://github.com/reallygoodwork/optical
+cd optical
+npm install
+npm run demons   <i># renders the three reels into examples/demons/videos</i></pre></figure>
+<p>Node 20 and ffmpeg. To use it in your own project, install it straight from GitHub: <code>npm install github:reallygoodwork/optical</code>. The README covers the rest. <a class="br" href="https://github.com/reallygoodwork/optical">Get the code</a></p>
+</div>
+</section>
+
+<section class="sec" id="about">
+<div class="lab">10 Studio</div>
+<div class="body">
+<p class="statement" style="margin:0">Made by Really Good Work Inc.</p>
+<div class="rows"><div class="row"><div class="k">Why “Optical”</div><div class="v"><span>Before computers, film titles and effects came off an optical printer. Its operator layered footage, mattes and type into one finished negative, frame by frame, the same way every time. Same job, new machine.</span></div></div><div class="row"><div class="k">Built on</div><div class="v"><span><a class="br" href="https://takumi.kane.tw">Takumi</a> for drawing, <a class="br" href="https://mediabunny.dev">Mediabunny</a> for video in the browser, ffmpeg on the server.</span></div></div><div class="row"><div class="k">Website</div><div class="v"><span><a class="br" href="https://reallygood.work">reallygood.work</a></span></div></div><div class="row"><div class="k">X</div><div class="v"><span><a class="br" href="https://x.com/reallygoodwork">@reallygoodwork</a></span></div></div><div class="row"><div class="k">Code</div><div class="v"><span><a class="br" href="https://github.com/reallygoodwork/optical">github.com/reallygoodwork/optical</a></span></div></div><div class="row"><div class="k">License</div><div class="v"><span>MIT. Use it for anything.</span><span>Just keep the credit.</span><span><a class="br" href="https://github.com/reallygoodwork/optical/blob/main/LICENSE">Read it</a></span></div></div></div>
+<a class="mark" href="https://reallygood.work">Really Good Work Inc.</a>
+</div>
+</section>
+</main>
+<footer><div>© 2026 Drew Minns, Really Good Work Inc.</div><div class="body"><span>Optical</span><span>MIT License · Set in Paper Mono</span></div></footer>
+</div>
+</div>
+<script>
+// Play reels only while they're on screen. With reduced motion, show posters and controls instead.
+(function () {
+  var vids = document.querySelectorAll("video");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+    vids.forEach(function (v) { v.controls = true; });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.preload = "auto"; e.target.play().catch(function () {}); }
+      else e.target.pause();
+    });
+  }, { rootMargin: "200px" });
+  vids.forEach(function (v) { io.observe(v); });
+})();
+</script>
+</body>
+</html>

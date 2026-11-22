@@ -1,0 +1,17 @@
+{
+  "name": "Optical site",
+  "colors": { "page": "#000000", "plate": "#1A1A1A", "text": "#E8E8E6", "dim": "#B3B3B0", "ink": "#E5484D", "border": "#595855" },
+  "fonts": { "display": "Paper Mono", "body": "Paper Mono" },
+  "fontFaces": [{ "family": "Paper Mono", "src": "../../site/media/PaperMono.woff2" }],
+  "text": {
+    "display": { "font": "Paper Mono", "weight": 700, "lineHeight": 0.9, "letterSpacing": -0.04, "uppercase": true },
+    "statement": { "font": "Paper Mono", "weight": 400, "lineHeight": 1.3, "letterSpacing": 0.01, "uppercase": true },
+    "label": { "font": "Paper Mono", "weight": 500, "lineHeight": 1.5, "letterSpacing": 0.02, "uppercase": true }
+  },
+  "assets": {
+    "reel": "../../site/media/demons-summon-reel.jpg",
+    "square": "../../site/media/demons-keeper-square.jpg",
+    "landscape": "../../site/media/demons-tally-landscape.jpg"
+  },
+  "defaults": { "background": "$colors.page", "color": "$colors.text", "font": "Paper Mono" }
+}
