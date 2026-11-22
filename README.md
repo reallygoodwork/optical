@@ -448,7 +448,7 @@ The commit type decides the version:
 - **Prereleases:** push to `next` or `beta` to release `1.2.0-next.1` style versions, marked as prereleases on GitHub.
 - **Dependabot:** runtime dependency bumps are `deps:` (patch release); dev and Actions bumps are `chore:` and `ci:` (no release).
 - **No secrets:** the workflow only uses the repo's built-in `GITHUB_TOKEN`.
-- **First run:** if the repo has no version tag yet, the workflow tags the first commit `v0.0.0`, so releases start at 0.1.0 instead of 1.0.0.
+- **First run:** semantic-release would start at 1.0.0, so when there's no version tag yet the workflow cuts `v0.1.0` itself and semantic-release takes over from the next push.
 - **Installing from a tag:** `npm install github:reallygoodwork/optical#vX.Y.Z` builds the package on install (the `prepare` script). The release tarball is already built.
 
 ## Limits

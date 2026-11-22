@@ -43,18 +43,26 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # semantic-release starts at 1.0.0 when it finds no version tag. Optical starts at 0.x, so the
-      # first run tags the root commit v0.0.0 and the first real release becomes 0.1.0.
-      - name: Baseline tag
+      # semantic-release always makes its first release 1.0.0. Optical starts at 0.x, so when the
+      # repo has no version tag yet this step cuts v0.1.0 itself (tag on HEAD, release, tarball) and
+      # semantic-release takes over from there. GitHub won't let the workflow token tag an older
+      # commit whose workflow files differ from main, so the bootstrap tag goes on HEAD.
+      - name: First release
+        id: first
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if ! git tag -l 'v*' | grep -q .; then
-            root=$(git rev-list --max-parents=0 HEAD | tail -1)
-            git tag v0.0.0 "$root"
-            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" v0.0.0
-          fi
+          if git tag -l 'v*' | grep -q .; then exit 0; fi
+          npm version 0.1.0 --no-git-tag-version --allow-same-version
+          npm pack
+          mv reallygoodwork-optical-0.1.0.tgz optical-0.1.0.tgz
+          git tag v0.1.0 HEAD
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" v0.1.0
+          gh release create v0.1.0 "optical-0.1.0.tgz#optical-0.1.0.tgz (prebuilt, npm install-able)" \
+            --repo "${{ github.repository }}" --title "v0.1.0" --generate-notes
+          echo "done=true" >> "$GITHUB_OUTPUT"
       - name: semantic-release
+        if: steps.first.outputs.done != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
